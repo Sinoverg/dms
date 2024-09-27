@@ -1,0 +1,31 @@
+package buttons
+
+templ DeleteButton() {
+	<script>
+	document.getElementById('delete-submit').addEventListener('click', function () {
+		const uuid = document.getElementById('delete-uuid').value;
+		const tableName = 'your_table_name'; // Replace with your table name
+
+		fetch('/delete', {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({uuid, tableName})
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log(data); // Handle the response data
+			})
+			.catch(error => {
+				console.error(error);
+			});
+	});
+</script>
+	<div id="delete-popup" class="popup">
+		<h2>Delete Record</h2>
+		<p>Enter the UUID of the record you want to delete:</p>
+		<input type="text" id="delete-uuid"/>
+		<button id="delete-submit">Delete</button>
+	</div>
+}
