@@ -5,20 +5,22 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
+	"github.com/Cirqach/dms/internal/database/models"
 	_ "github.com/lib/pq"
 )
 
-type dbController struct {
+type DBController struct {
 	db *sql.DB
 }
 
-func NewController() *dbController {
+func NewController() *DBController {
 	db, err := connectDatabase()
 	if err != nil {
 		log.Fatal("Error making connection with database: ", err)
 	}
-	return &dbController{
+	return &DBController{
 		db: db,
 	}
 }
@@ -31,4 +33,76 @@ func connectDatabase() (*sql.DB, error) {
 	}
 	defer db.Close()
 	return db, nil
+}
+
+func (database *DBController) SelectFiles() ([]models.File, error) {
+	rows, err := database.db.Query("SELECT * FROM files")
+	if err != nil {
+		return nil, err
+	}
+	files := make([]models.File, 0)
+	for rows.Next() {
+		var uuid, name, size, duration string
+		err := rows.Scan(uuid, name, size, duration)
+		if err != nil {
+			return nil, err
+		}
+		file := models.File{
+			Uuid:     uuid,
+			Name:     name,
+			Size:     size,
+			Duration: duration,
+		}
+		files = append(files, file)
+	}
+	return files, nil
+}
+func (database *DBController) SelectUsers() ([]models.User, error) {
+	rows, err := database.db.Query("SELECT * FROM users")
+	if err != nil {
+		return nil, err
+	}
+	users := make([]models.User, 0)
+	for rows.Next() {
+		var uuid, fname, sname, login, email, password string
+		err := rows.Scan(uuid, fname, sname, login, email, password)
+		if err != nil {
+			return nil, err
+		}
+		user := models.User{
+			Uuid:     uuid,
+			Fname:    fname,
+			Sname:    sname,
+			Login:    login,
+			Email:    email,
+			Password: password,
+		}
+		users = append(users, user)
+	}
+	return users, nil
+}
+func (database *DBController) SelectBroadcast() ([]models.Broadcast, error) {
+	rows, err := database.db.Query("SELECT * FROM broadcast")
+	if err != nil {
+		return nil, err
+	}
+	broadcast := make([]models.Broadcast, 0)
+	for rows.Next() {
+		var uuid, fileuuid, useruuid string
+		var starttime, endtime time.Time
+
+		err := rows.Scan(uuid, fileuuid, useruuid, starttime, endtime)
+		if err != nil {
+			return nil, err
+		}
+		b := models.Broadcast{
+			Uuid:               uuid,
+			FileUuid:           fileuuid,
+			UserUuid:           useruuid,
+			BroadcastStartTime: starttime,
+			BroadcastEndTime:   endtime,
+		}
+		broadcast = append(broadcast, b)
+	}
+	return broadcast, nil
 }

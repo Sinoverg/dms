@@ -29,7 +29,7 @@ func ChangeTablePage() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"change-tables\"><table><tr><th>Users</th><th>Broadcast</th><th>Files</th></tr><tr><td><button>Add User</button></td><td><button>Start Broadcast</button></td><td><button>Upload Files</button></td></tr></table>></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"change-tables\"><table><tr><th>Users</th><th>Broadcast</th><th>Files</th></tr><tr><td><button hx-get=\"/tables/users\" hx-target=\"main\">Change</button></td><td><button hx-get=\"/tables/broadcast\" hx-target=\"main\">Change</button></td><td><button hx-get=\"/tables/files\" hx-target=\"main\">Change</button></td></tr></table></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

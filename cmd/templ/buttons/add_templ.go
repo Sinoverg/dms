@@ -29,7 +29,7 @@ func AddAskTable() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"update-element\"><h2>Update Record</h2><p>Enter table name which record you want to update:</p><select id=\"place-select\"><option value=\"broadcast\">Broadcast</option> <option value=\"files\">Files</option> <option value=\"users\">Users</option></select> <button id=\"update-table-ask-submit\">Choose</button></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"update-element\"><h2>Update Record</h2><p>Enter table name which record you want to update:</p><select id=\"place-select\" multiple><option value=\"broadcast\">Broadcast</option> <option value=\"files\">Files</option> <option value=\"users\">Users</option></select> <button id=\"update-table-ask-submit\">Choose</button></div><script>\n\tdocument.getElementById(\"update-table-ask-submit\").addEventListener(\"click\", function() {\n        const selectedOptions = document.getElementById(\"place-select\").selectedOptions;\n        const selectedValues = Array.from(selectedOptions).map(option => option.value);\n\n\tfetch(\"/rest/add\", {\n  method: \"POST\",\n  body: JSON.stringify({\n    table: 1,\n    title: \"Fix my bugs\",\n    completed: false\n  }),\n  headers: {\n    \"Content-type\": \"application/json; charset=UTF-8\"\n  }\n});\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -95,7 +95,7 @@ func AddFile() templ.Component {
 	})
 }
 
-func AddUser(table string) templ.Component {
+func AddUser() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

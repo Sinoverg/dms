@@ -1,0 +1,38 @@
+package tables
+
+import models "github.com/Cirqach/dms/internal/database/models"
+
+templ Files(files []models.File) {
+	<ul>
+		for _, file := range files {
+			<li>{ file.Uuid }</li>
+			<li>{ file.Name }</li>
+			<li>{ file.Size }</li>
+			<li>{ file.Duration }</li>
+		}
+	</ul>
+}
+
+templ Users(users []models.User) {
+	<ul>
+		for _, user := range users {
+			<li>{ user.Uuid }</li>
+			<li>{ user.Fname } { user.Sname }</li>
+			<li>{ user.Login }</li>
+			<li>{ user.Email }</li>
+			<li>{ user.Password }</li>
+		}
+	</ul>
+}
+
+templ Broadcast(broadcast []models.Broadcast) {
+	<ul>
+		for _, b := range broadcast {
+			<li>{ b.Uuid }</li>
+			<li>{ b.FileUuid }</li>
+			<li>{ b.UserUuid }</li>
+			<li>{ b.BroadcastStartTime.String() }</li>
+			<li>{ b.BroadcastEndTime.String() }</li>
+		}
+	</ul>
+}

@@ -1,6 +1,9 @@
 package body
 
-import "github.com/Cirqach/dms/cmd/templ/header"
+import (
+	"github.com/Cirqach/dms/cmd/templ/header"
+	"github.com/Cirqach/dms/cmd/templ/tables"
+)
 
 templ Body() {
 	<!DOCTYPE html>
@@ -16,7 +19,10 @@ templ Body() {
 			<header>
 				@header.Header()
 			</header>
-			<main id="main"></main>
+			<main id="main">
+				<h1>Select table</h1>
+				@tables.ChangeTablePage()
+			</main>
 			<footer></footer>
 		</body>
 	</html>

@@ -1,52 +1,52 @@
 package buttons
 
 templ PreUpdate() {
-<div id="update-element">
-	<h2>Update Record</h2>
-	<p>Enter record from which table you want to update:</p>
-	<select id="place-select">
-		<option value="broadcast">Broadcast</option>
-		<option value="files">Files</option>
-		<option value="users">Users</option>
-	</select>
-	<p>Enter the UUID of the record you want to update:</p>
-	<input type="text" id="update-uuid" />
-	<button id="update-submit">Update</button>
-</div>
+	<div id="update-element">
+		<h2>Update Record</h2>
+		<p>Enter record from which table you want to update:</p>
+		<select id="place-select">
+			<option value="broadcast">Broadcast</option>
+			<option value="files">Files</option>
+			<option value="users">Users</option>
+		</select>
+		<p>Enter the UUID of the record you want to update:</p>
+		<input type="text" id="update-uuid"/>
+		<button id="update-submit">Update</button>
+	</div>
 }
 
 templ UpdateBroadcast(fileUuid, userUuid, startQueueTime, endQueueTime, date string) {
-<div id="update-form">
-	<h2>Update Record</h2>
-	<input type="text" name="file_uuid" value={ fileUuid } />
-	<input type="text" name="user_uuid" value={ userUuid } />
-	<input type="text" name="start_queue_time" value={ startQueueTime } />
-	<input type="text" name="end_queue_time" value={ endQueueTime } />
-	<input type="text" name="date" value={ date } />
-	<button id="update-submit">Update</button>
-</div>
+	<div id="update-form">
+		<h2>Update Record</h2>
+		<input type="text" name="file_uuid" value={ fileUuid }/>
+		<input type="text" name="user_uuid" value={ userUuid }/>
+		<input type="text" name="start_queue_time" value={ startQueueTime }/>
+		<input type="text" name="end_queue_time" value={ endQueueTime }/>
+		<input type="text" name="date" value={ date }/>
+		<button id="update-submit">Update</button>
+	</div>
 }
 
 templ UpdateUsers(Uuid, FirstName, LastName, Login, Email, PassHash string) {
-<div id="update-form">
-	<h2>Update Record</h2>
-	<input type="text" name="uuid" value={ Uuid } />
-	<input type="text" name="first_name" value={ FirstName } />
-	<input type="text" name="second_name" value={ LastName } />
-	<input type="text" name="login" value={ Login } />
-	<input type="text" name="email" value={ Email } />
-	<input type="text" name="password" value={ PassHash } />
-	<button id="update-submit">Update</button>
-</div>
+	<div id="update-form">
+		<h2>Update Record</h2>
+		<input type="text" name="uuid" value={ Uuid }/>
+		<input type="text" name="first_name" value={ FirstName }/>
+		<input type="text" name="second_name" value={ LastName }/>
+		<input type="text" name="login" value={ Login }/>
+		<input type="text" name="email" value={ Email }/>
+		<input type="text" name="password" value={ PassHash }/>
+		<button id="update-submit">Update</button>
+	</div>
 }
 
 templ UpdateFiles(Uuid, Name, Size, Duration string) {
-<div id="update-form">
-	<h2>Update Record</h2>
-	<input type="text" name="uuid" value={ Uuid } />
-	<input type="text" name="name" value={ Name } />
-	<input type="text" name="size" value={ Size } />
-	<input type="text" name="duration" value={ Duration } />
-	<button id="update-submit">Update</button>
-</div>
+	<div id="update-form">
+		<h2>Update Record</h2>
+		<input type="text" name="uuid" value={ Uuid }/>
+		<input type="text" name="name" value={ Name }/>
+		<input type="text" name="size" value={ Size }/>
+		<input type="text" name="duration" value={ Duration }/>
+		<button id="update-submit">Update</button>
+	</div>
 }
