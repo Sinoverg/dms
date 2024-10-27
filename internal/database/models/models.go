@@ -2,26 +2,39 @@ package models
 
 import "time"
 
+type Record interface {
+}
+
 type User struct {
-	Uuid     string
-	Fname    string
-	Sname    string
-	Login    string
-	Email    string
-	Password string
+	Id       string `json:"id"`
+	Fname    string `json:"first_name"`
+	Sname    string `json:"second_name"`
+	Nickname string `json:"nickname"`
+	Login    string `json:"login"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type Broadcast struct {
-	Uuid               string
-	FileUuid           string
-	UserUuid           string
-	BroadcastStartTime time.Time
-	BroadcastEndTime   time.Time
+	Id                 string    `json:"id"`
+	BroadcastStartTime time.Time `json:"broadcast_start_time"`
+	BroadcastEndTime   time.Time `json:"broadcast_end_time"`
 }
 
-type File struct {
-	Uuid     string
-	Name     string
-	Size     string
-	Duration string
+type Videofile struct {
+	Id       string `json:"id"`
+	Filename string `json:"filename"`
+	Uploader string `json:"uploader"`
+	Size     string `json:"size"`
+	Duration string `json:"duration"`
+}
+
+type BroadcastFiles struct {
+	BroadcastId string `json:"broadcast_id"`
+	VideofileId string `json:"videofile_id"`
+}
+
+type BroadcastUsers struct {
+	BroadcastId string `json:"broadcast_id"`
+	UserId      string `json:"user_id"`
 }

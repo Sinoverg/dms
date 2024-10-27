@@ -1,18 +1,32 @@
 package tables
 
 templ ChangeTablePage() {
-	<div class="change-tables">
-		<table>
-			<tr>
-				<th>Users</th>
-				<th>Broadcast</th>
-				<th>Files</th>
-			</tr>
-			<tr>
-				<td><button hx-get="/tables/users" hx-target="main">Change</button></td>
-				<td><button hx-get="/tables/broadcast" hx-target="main">Change</button></td>
-				<td><button hx-get="/tables/files" hx-target="main">Change</button></td>
-			</tr>
-		</table>
-	</div>
+<summary>
+	Change table
+</summary>
+<ul dir="rtl">
+	<script>
+		function ChangeTableName(name) {
+			const tablename = document.getElementById("tablename");
+			tablename.innerHTML = name;
+		}
+	</script>
+	<li><a onClick="ChangeTableName('Users')" hx-get="/templ/tables/users" hx-target="main" id="tua">Users</a></li>
+	<li>
+		<a onClick="ChangeTableName('Broadcasts')" hx-get="/templ/tables/broadcasts"
+			hx-target="main">Broadcasts</a>
+	</li>
+	<li>
+		<a onClick="ChangeTableName('Videofiles')" hx-get="/templ/tables/videofiles"
+			hx-target="main">Videofiles</a>
+	</li>
+	<li>
+		<a onClick="ChangeTableName('Broadcasts_files')" hx-get="/templ/tables/broadcasts_files"
+			hx-target="main">Broadcasts_files</a>
+	</li>
+	<li>
+		<a onClick="ChangeTableName('Broadcasts_users')" hx-get="/templ/tables/broadcasts_users"
+			hx-target="main">Broadcasts_users</a>
+	</li>
+</ul>
 }

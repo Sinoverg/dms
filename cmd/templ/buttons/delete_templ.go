@@ -8,7 +8,7 @@ package buttons
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func DeleteButton() templ.Component {
+func DeleteDialog() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -29,7 +29,65 @@ func DeleteButton() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n\tdocument.getElementById('delete-submit').addEventListener('click', function () {\n\t\tconst uuid = document.getElementById('delete-uuid').value;\n\t\tconst tableName = 'your_table_name'; // Replace with your table name\n\n\t\tfetch('/delete', {\n\t\t\tmethod: 'DELETE',\n\t\t\theaders: {\n\t\t\t\t'Content-Type': 'application/json'\n\t\t\t},\n\t\t\tbody: JSON.stringify({uuid, tableName})\n\t\t})\n\t\t\t.then(response => response.json())\n\t\t\t.then(data => {\n\t\t\t\tconsole.log(data); // Handle the response data\n\t\t\t})\n\t\t\t.catch(error => {\n\t\t\t\tconsole.error(error);\n\t\t\t});\n\t});\n</script><div id=\"delete-popup\" class=\"popup\"><h2>Delete Record</h2><p>Enter the UUID of the record you want to delete:</p><input type=\"text\" id=\"delete-uuid\"> <button id=\"delete-submit\">Delete</button></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<dialog id=\"delete_dialog\"><article><header><button aria-label=\"Close\" rel=\"prev\" onclick=\"CloseDialog(&#39;delete_dialog&#39;)\"></button><p><strong>Delete</strong></p></header><fieldset><legend>Choose table:</legend> <label><input type=\"radio\" name=\"table\" checked> Users</label> <label><input type=\"radio\" name=\"table\"> Broadcasts</label> <label><input type=\"radio\" name=\"table\"> Videofiles</label> <details class=\"dropdown\"><summary>Other</summary><ul dir=\"rtl\"><li><a onclick=\"ShowDialog(delete_broadcasts_users_dialog); CloseDialog(delete_dialog);\">Broadcasts_users</a></li><li><a onclick=\"ShowDialog(delete_broadcasts_files_dialog);CloseDialog(delete_dialog);\">Broadcasts_files</a></li></ul></details></fieldset><input><footer><button class=\"secondary\" onclick=\"CloseDialog(&#39;delete_dialog&#39;)\">Cancel</button> <button>Delete</button></footer></article></dialog>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func DeleteBroadcastsFilesDialog() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var2 == nil {
+			templ_7745c5c3_Var2 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<dialog id=\"delete_broadcasts_files_dialog\"><article><header><button onclick=\"CloseDialog(&#39;delete_broadcasts_files_dialog&#39;)\" class=\"close\" aria-label=\"Close\" rel=\"prev\"></button><p><strong><h2>Add user</h2></strong></p></header><div style=\"text-align: center;\"><form id=\"add-form\"><input type=\"text\" name=\"first_name\" placeholder=\"First name\"> <input type=\"text\" name=\"second_name\" placeholder=\"Second name\"> <input type=\"text\" name=\"nickname\" placeholder=\"Nickname\"> <input type=\"text\" name=\"login\" placeholder=\"Login\"> <input type=\"email\" name=\"email\" placeholder=\"Email\"> <input type=\"password\" name=\"password\" placeholder=\"Password\"> <button type=\"submit\">Add</button></form></div></article></dialog>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func DeleteBroadcastsUsersDialog() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<dialog id=\"delete_broadcasts_users_dialog\"><article><header><button onclick=\"CloseDialog(&#39;delete_broadcasts_users_dialog&#39;)\" class=\"close\" aria-label=\"Close\" rel=\"prev\"></button><p><strong><h2>Add user</h2></strong></p></header><div style=\"text-align: center;\"><form id=\"add-form\"><input type=\"text\" name=\"first_name\" placeholder=\"First name\"> <input type=\"text\" name=\"second_name\" placeholder=\"Second name\"> <input type=\"text\" name=\"nickname\" placeholder=\"Nickname\"> <input type=\"text\" name=\"login\" placeholder=\"Login\"> <input type=\"email\" name=\"email\" placeholder=\"Email\"> <input type=\"password\" name=\"password\" placeholder=\"Password\"> <button type=\"submit\">Add</button></form></div></article></dialog>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

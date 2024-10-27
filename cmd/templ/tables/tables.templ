@@ -2,37 +2,81 @@ package tables
 
 import models "github.com/Cirqach/dms/internal/database/models"
 
-templ Files(files []models.File) {
-	<ul>
+templ Files(files []models.Videofile) {
+	<section>
 		for _, file := range files {
-			<li>{ file.Uuid }</li>
-			<li>{ file.Name }</li>
-			<li>{ file.Size }</li>
-			<li>{ file.Duration }</li>
+			<article id="element" style="border-style:groove; margin: 5px;">
+				<header>
+					<h4 style="text-align: center;">{ file.Id }</h4>
+				</header>
+				<div style="margin-left: 5px;">
+					<p>Filename: { file.Filename }</p>
+					<p>Uploader id: { file.Uploader }</p>
+					<p>Filesize: { file.Size }</p>
+					<p>Duration: { file.Duration }</p>
+				</div>
+			</article>
 		}
-	</ul>
+	</section>
 }
 
 templ Users(users []models.User) {
-	<ul>
+	<section>
 		for _, user := range users {
-			<li>{ user.Uuid }</li>
-			<li>{ user.Fname } { user.Sname }</li>
-			<li>{ user.Login }</li>
-			<li>{ user.Email }</li>
-			<li>{ user.Password }</li>
+			<article id="element" style="border-style:groove; margin: 5px;">
+				<header>
+					<h4 style="text-align: center;">{ user.Id }</h4>
+				</header>
+				<div style="margin-left: 5px;">
+					<p>{ user.Fname } { user.Sname }</p>
+					<p>Nickname: { user.Nickname }</p>
+					<p>Login: { user.Login }</p>
+					<p>Email: { user.Email }</p>
+					<p>Password hash: { user.Password }</p>
+				</div>
+			</article>
 		}
-	</ul>
+	</section>
 }
 
 templ Broadcast(broadcast []models.Broadcast) {
-	<ul>
+	<section>
 		for _, b := range broadcast {
-			<li>{ b.Uuid }</li>
-			<li>{ b.FileUuid }</li>
-			<li>{ b.UserUuid }</li>
-			<li>{ b.BroadcastStartTime.String() }</li>
-			<li>{ b.BroadcastEndTime.String() }</li>
+			<article id="element" style="border-style:groove; margin: 5px;">
+				<header>
+					<h4 style="text-align: center;">{ b.Id }</h4>
+				</header>
+				<div style="margin-left: 5px;">
+					<p>Broadcast start time: { b.BroadcastStartTime.String() }</p>
+					<p>Broadcast end time: { b.BroadcastEndTime.String() }</p>
+				</div>
+			</article>
 		}
-	</ul>
+	</section>
+}
+
+templ Broadcasts_files(broadcast_files []models.BroadcastFiles) {
+	<section>
+		for _, bf := range broadcast_files {
+			<article id="element" style="border-style:groove; margin: 5px;">
+				<div style="margin-left: 5px;">
+					<p>Broadcast id: { bf.BroadcastId }</p>
+					<p>File id: { bf.VideofileId }</p>
+				</div>
+			</article>
+		}
+	</section>
+}
+
+templ Broadcasts_users(broadcast_users []models.BroadcastUsers) {
+	<section>
+		for _, bf := range broadcast_users {
+			<article id="element" style="border-style:groove; margin: 5px;">
+				<div style="margin-left: 5px;">
+					<p>Broadcast id: { bf.BroadcastId }</p>
+					<p>User id: { bf.UserId }</p>
+				</div>
+			</article>
+		}
+	</section>
 }

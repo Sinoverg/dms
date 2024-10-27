@@ -1,70 +1,207 @@
 package buttons
 
-templ AddAskTable() {
-	<div id="update-element">
-		<h2>Update Record</h2>
-		<p>Enter table name which record you want to update:</p>
-		<select id="place-select" multiple>
-			<option value="broadcast">Broadcast</option>
-			<option value="files">Files</option>
-			<option value="users">Users</option>
-		</select>
-		<button id="update-table-ask-submit">Choose</button>
-	</div>
+templ AddButton() {
 	<script>
-	document.getElementById("update-table-ask-submit").addEventListener("click", function() {
-        const selectedOptions = document.getElementById("place-select").selectedOptions;
-        const selectedValues = Array.from(selectedOptions).map(option => option.value);
-
-	fetch("/rest/add", {
-  method: "POST",
-  body: JSON.stringify({
-    table: 1,
-    title: "Fix my bugs",
-    completed: false
-  }),
-  headers: {
-    "Content-type": "application/json; charset=UTF-8"
-  }
-});
-	</script>
+	function CloseDialog(name) {
+		var dialog = document.getElementById(name);
+		dialog.close();
+	}
+</script>
+	<details class="dropdown">
+		<summary>
+			Add
+		</summary>
+		<ul dir="rtl">
+			<li>
+				<a onclick="AddUserDialog()">Users</a>
+			</li>
+			<li>
+				<a onclick="AddBroadcastsDialog()">Broadcasts</a>
+			</li>
+			<li>
+				<a onclick="AddVideofilesDialog()">Videofiles</a>
+			</li>
+			<li>
+				<a onclick="AddBroadcastsFilesDialog()">Broadcasts_files</a>
+			</li>
+			<li>
+				<a onclick="AddBroadcastsUsersDialog()">Broadcasts_users</a>
+			</li>
+		</ul>
+	</details>
 }
 
-templ AddBroadcast() {
-	<div style="text-align: center;">
-		<h2>Add Record</h2>
-		<form id="add-form">
-			<input type="text" name="file_uuid" placeholder="First name"/>
-			<input type="text" name="user_uuid" placeholder="Second name"/>
-			<input type="text" name="start_queue_time" placeholder="Login"/>
-			<input type="text" name="end_queue_time" placeholder="Email"/>
-			<button type="submit">Add</button>
-		</form>
-	</div>
+templ AddBroadcastsUsersDialog() {
+	<dialog id="add_broadcasts_users_dialog">
+		<article>
+			<header>
+				<button
+					aria-label="Close"
+					rel="prev"
+					onclick="CloseDialog('add_broadcasts_users_dialog')"
+				></button>
+				<script>
+			</script>
+				<p>
+					<strong>
+						<h2>Add broadcast_user</h2>
+					</strong>
+				</p>
+			</header>
+			<div style="text-align: center;">
+				<form id="buadd-form" action="http://localhost:8080/api/add/broadcasts_users" method="POST">
+					<input type="number" name="broadcastId" placeholder="Broadcast id"/>
+					<input type="number" name="userId" placeholder="User id"/>
+					<button type="submit" onclick="AddBroadcastsUsersDialog()">Add</button>
+				</form>
+				<div id="message"></div>
+			</div>
+		</article>
+	</dialog>
 }
 
-templ AddFile() {
-	<div style="text-align: center;">
-		<h2>Add Record</h2>
-		<form id="add-form">
-			<input type="text" name="file_name" placeholder="First name"/>
-			<input type="text" name="file_size" placeholder="Second name"/>
-			<input type="text" name="file_duration" placeholder="Login"/>
-			<button type="submit">Add</button>
-		</form>
-	</div>
+templ AddBroadcastsFilesDialog() {
+	<dialog id="add_broadcasts_files_dialog">
+		<article>
+			<header>
+				<button
+					onclick="CloseDialog('add_broadcasts_files_dialog')"
+					aria-label="Close"
+					rel="prev"
+				></button>
+				<p>
+					<strong>
+						<h2>Add broadcast_file</h2>
+					</strong>
+				</p>
+			</header>
+			<div style="text-align: center;">
+				<form id="bfadd-form" action="http://localhost:8080/api/add/broadcasts" method="POST">
+					<input type="number" name="broadcast_id" placeholder="Broadcast id"/>
+					<input type="number" name="videofile_id" placeholder="Videofile id"/>
+					<button type="submit">Add</button>
+				</form>
+			</div>
+		</article>
+	</dialog>
 }
 
-templ AddUser() {
-	<div style="text-align: center;">
-		<h2>Add Record</h2>
-		<form id="add-form">
-			<input type="text" name="first_name" placeholder="First name"/>
-			<input type="text" name="second_name" placeholder="Second name"/>
-			<input type="text" name="login" placeholder="Login"/>
-			<input type="text" name="email" placeholder="Email"/>
-			<input type="text" name="password" placeholder="Password"/>
-			<button type="submit">Add</button>
-		</form>
-	</div>
+templ AddBroadcastDialog() {
+	<dialog id="add_broadcast_dialog">
+		<article>
+			<header>
+				<button onclick="CloseDialog('add_broadcast_dialog')" aria-label="Close" rel="prev"></button>
+				<p>
+					<strong>
+						<h2>Add broadcast</h2>
+					</strong>
+				</p>
+			</header>
+			<div style="text-align: center;">
+				<form id="badd-form">
+					<input type="datetime" name="broadcast_start_time" placeholder="Broadcast start time"/>
+					<input type="datetime" name="broadcast_end_time" placeholder="Broadcast end time"/>
+					<button type="submit">Add</button>
+				</form>
+			</div>
+		</article>
+	</dialog>
+}
+
+templ AddVideofileDialog() {
+	<dialog id="add_videofile_dialog">
+		<article>
+			<header>
+				<button onclick="CloseDialog('add_videofile_dialog')" aria-label="Close" rel="prev"></button>
+				<script>
+				const dialog = document.getElementById("add_videofile_dialog");
+				dialog.showModal;
+			</script>
+				<p>
+					<strong>
+						<h2>Add videofile</h2>
+					</strong>
+				</p>
+			</header>
+			<div style="text-align: center;">
+				<form id="vadd-form">
+					<input type="text" name="filename" placeholder="File name"/>
+					<input type="text" name="uploader" placeholder="Uploader id"/>
+					<input type="text" name="size" placeholder="File size"/>
+					<input type="number" name="duration" placeholder="File duration, mins"/>
+					<button>Add</button>
+				</form>
+				<div id="message"></div>
+			</div>
+		</article>
+	</dialog>
+}
+
+templ AddUserDialog() {
+	<dialog id="add_user_dialog">
+		<article>
+			<header>
+				<p>
+					<strong>
+						<h2>Add user</h2>
+					</strong>
+				</p>
+			</header>
+			<form id="uadd-form">
+				<input
+					aria-describedby="add_u_first_name_error"
+					id="add_u_first_name"
+					type="text"
+					name="first_name"
+					placeholder="First name"
+				/>
+				<small id="add_u_first_name_error">
+					Enter valid name without numbers and special symbols
+				</small>
+				<input
+					aria-describedby="add_u_second_name_error"
+					id="add_u_second_name"
+					type="text"
+					name="second_name"
+					placeholder="Second name"
+				/>
+				<small id="add_u_second_name_error">
+					Enter valid name without numbers and special symbols
+				</small>
+				<input
+					aria-describedby="add_u_nickname_error"
+					id="add_u_nickname"
+					type="text"
+					name="nickname"
+					placeholder="Nickname"
+				/>
+				<small id="add_u_nickname_error">
+					Lenght of nickname can't be more than 15 symbols
+				</small>
+				<input
+					aria-describedby="add_u_login_error"
+					id="add_u_login"
+					type="text"
+					name="login"
+					placeholder="Login"
+				/>
+				<small id="add_u_login_error">
+					Login can't contain spaces or special symbols
+				</small>
+				<input
+					aria-describedby="add_u_email_error"
+					id="add_u_email"
+					type="email"
+					name="email"
+					placeholder="Email"
+				/>
+				<small id="add_u_email_error">
+					Enter valid email, for example "unamed@gmail.com"
+				</small>
+				<input id="add_u_password" type="text" name="password" placeholder="Password"/>
+				<input id="add_u_repassword" type="text" name="repassword" placeholder="Repeat password"/>
+				<button type="submit">Add</button>
+			</form>
+		</article>
+	</dialog>
 }

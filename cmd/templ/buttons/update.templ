@@ -1,52 +1,105 @@
 package buttons
 
-templ PreUpdate() {
-	<div id="update-element">
-		<h2>Update Record</h2>
-		<p>Enter record from which table you want to update:</p>
-		<select id="place-select">
-			<option value="broadcast">Broadcast</option>
-			<option value="files">Files</option>
-			<option value="users">Users</option>
-		</select>
-		<p>Enter the UUID of the record you want to update:</p>
-		<input type="text" id="update-uuid"/>
-		<button id="update-submit">Update</button>
-	</div>
+templ UpdateTableDialog() {
+<dialog id="update_dialog_first_page">
+	<article>
+		<header>
+			<p>
+				<strong>Update</strong>
+			</p>
+		</header>
+		<fieldset>
+			<legend>Choose table:</legend>
+			<label>
+				<input type="radio" name="table" checked />
+				Users
+			</label>
+			<label>
+				<input type="radio" name="table" />
+				Broadcasts
+			</label>
+			<label>
+				<input type="radio" name="table" />
+				Videofiles
+			</label>
+			<label>
+				<input type="radio" name="table" />
+				Broadcasts_files
+			</label>
+			<label>
+				<input type="radio" name="table" />
+				Broadcasts_users
+			</label>
+		</fieldset>
+		<input />
+		<footer>
+			<button class="secondary" onclick="CloseDialog('update_dialog_first_page')">
+				Cancel
+			</button>
+			<button hx-get="/api/update/{table}/{id}" hx-target="#update_dialog_first_page">Next</button>
+		</footer>
+	</article>
+</dialog>
 }
 
-templ UpdateBroadcast(fileUuid, userUuid, startQueueTime, endQueueTime, date string) {
-	<div id="update-form">
-		<h2>Update Record</h2>
-		<input type="text" name="file_uuid" value={ fileUuid }/>
-		<input type="text" name="user_uuid" value={ userUuid }/>
-		<input type="text" name="start_queue_time" value={ startQueueTime }/>
-		<input type="text" name="end_queue_time" value={ endQueueTime }/>
-		<input type="text" name="date" value={ date }/>
-		<button id="update-submit">Update</button>
-	</div>
+templ UpdateDialog(table string, data ...string) {
+<dialog id="update_dialog_second_page" open>
+	<article>
+		<header>
+			<p>
+				<strong>Enter the</strong>
+			</p>
+		</header>
+		switch table {
+		case "users":
+		@UpdateUsers(data[0], data[1], data[2], data[3], data[4], data[5])
+		case "broadcasts":
+		case "files":
+		case "broadcasts_files":
+		case "broadcasts_users":
+		}
+		<footer>
+			<button class="secondary">
+				Cancel
+			</button>
+			<button>Next</button>
+		</footer>
+	</article>
+</dialog>
+}
+
+templ UpdateBroadcasts(fileUuid, userUuid, startQueueTime, endQueueTime, date string) {
+<div id="update-form">
+	<h2>Update Record</h2>
+	<input type="text" name="file_uuid" value={ fileUuid } />
+	<input type="text" name="user_uuid" value={ userUuid } />
+	<input type="text" name="start_queue_time" value={ startQueueTime } />
+	<input type="text" name="end_queue_time" value={ endQueueTime } />
+	<input type="text" name="date" value={ date } />
+	<button id="update-submit">Update</button>
+</div>
 }
 
 templ UpdateUsers(Uuid, FirstName, LastName, Login, Email, PassHash string) {
-	<div id="update-form">
-		<h2>Update Record</h2>
-		<input type="text" name="uuid" value={ Uuid }/>
-		<input type="text" name="first_name" value={ FirstName }/>
-		<input type="text" name="second_name" value={ LastName }/>
-		<input type="text" name="login" value={ Login }/>
-		<input type="text" name="email" value={ Email }/>
-		<input type="text" name="password" value={ PassHash }/>
-		<button id="update-submit">Update</button>
-	</div>
+<div id="update-form">
+	<h2>Update Record</h2>
+	<input type="text" name="uuid" value={ Uuid } />
+	<input type="text" name="first_name" value={ FirstName } />
+	<input type="text" name="second_name" value={ LastName } />
+	<input type="text" name="login" value={ Login } />
+	<input type="text" name="email" value={ Email } />
+	<input type="text" name="password" value={ PassHash } />
+	<button id="update-submit">Update</button>
+</div>
 }
 
 templ UpdateFiles(Uuid, Name, Size, Duration string) {
-	<div id="update-form">
-		<h2>Update Record</h2>
-		<input type="text" name="uuid" value={ Uuid }/>
-		<input type="text" name="name" value={ Name }/>
-		<input type="text" name="size" value={ Size }/>
-		<input type="text" name="duration" value={ Duration }/>
-		<button id="update-submit">Update</button>
-	</div>
+<div id="update-form">
+	<h2>Update Record</h2>
+	<input type="text" name="uuid" value={ Uuid } />
+	<input type="text" name="name" value={ Name } />
+	<input type="text" name="size" value={ Size } />
+	<input type="text" name="duration" value={ Duration } />
+	<button id="update-submit">Update</button>
+</div>
 }

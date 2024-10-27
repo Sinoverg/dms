@@ -6,7 +6,6 @@ import (
 
 	"github.com/Cirqach/dms/cmd/handler"
 	"github.com/Cirqach/dms/cmd/templ/body"
-	"github.com/Cirqach/dms/cmd/templ/buttons"
 	"github.com/Cirqach/dms/cmd/templ/tables"
 	"github.com/Cirqach/dms/internal/database"
 	"github.com/Cirqach/dms/internal/env"
@@ -19,30 +18,13 @@ func main() {
 	}
 	db := database.NewController()
 	s := http.NewServeMux()
-	s.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+	s.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static/"))))
 	s.Handle("/", templ.Handler(body.Body()))
 	s.Handle("/templ/change-table", templ.Handler(tables.ChangeTablePage()))
-	s.Handle("/tables/users", templ.Handler(handler.TableHandler(db, "users")))
-	s.Handle("/tables/files", templ.Handler(handler.TableHandler(db, "files")))
-	s.Handle("/tables/broadcast", templ.Handler(handler.TableHandler(db, "broadcast")))
-	s.HandleFunc("/templ/buttons/{button}/{type}", addButtonHandler)
-	http.ListenAndServe(":8080", s)
-}
-
-func addButtonHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.PathValue("button") {
-	case "ask":
-		switch r.PathValue("type") {
-		case "ask":
-			buttons.AddAskTable().Render(r.Context(), w)
-		case "user":
-			buttons.AddUser().Render(r.Context(), w)
-		case "file":
-			buttons.AddFile().Render(r.Context(), w)
-		case "broadcast":
-			buttons.AddBroadcast().Render(r.Context(), w)
-		}
-
-	}
-	buttons.AddAskTable().Render(r.Context(), w)
+	s.HandleFunc("/templ/tables/{table}", handler.TableHandler(db))
+	s.HandleFunc("/templ/buttons/{Button}/{Type}", handler.ButtonHandler)
+	s.HandleFunc("/api/{function}/{table}", handler.ApiHandler(db))
+	log.Println("Running server on port 8080")
+	log.Fatal(http.ListenAndServe(":1337", s))
+	// http.ListenAndServeTLS(":80", "ss-cert.crt", "private-key.key", s)
 }

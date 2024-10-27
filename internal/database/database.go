@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
-	"github.com/Cirqach/dms/internal/database/models"
 	_ "github.com/lib/pq"
 )
 
@@ -31,78 +29,107 @@ func connectDatabase() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
 	return db, nil
 }
 
-func (database *DBController) SelectFiles() ([]models.File, error) {
-	rows, err := database.db.Query("SELECT * FROM files")
+func (d *DBController) SelectAll(table string) (*sql.Rows, error) {
+	rows, err := d.db.Query("SELECT * FROM " + table + ";")
 	if err != nil {
-		return nil, err
+		log.Println("Error: ", err)
+		return &sql.Rows{}, err
 	}
-	files := make([]models.File, 0)
-	for rows.Next() {
-		var uuid, name, size, duration string
-		err := rows.Scan(uuid, name, size, duration)
-		if err != nil {
-			return nil, err
-		}
-		file := models.File{
-			Uuid:     uuid,
-			Name:     name,
-			Size:     size,
-			Duration: duration,
-		}
-		files = append(files, file)
-	}
-	return files, nil
+	return rows, err
 }
-func (database *DBController) SelectUsers() ([]models.User, error) {
-	rows, err := database.db.Query("SELECT * FROM users")
-	if err != nil {
-		return nil, err
-	}
-	users := make([]models.User, 0)
-	for rows.Next() {
-		var uuid, fname, sname, login, email, password string
-		err := rows.Scan(uuid, fname, sname, login, email, password)
+func (d *DBController) AddRecord(table string, data ...string) (string, error) {
+	switch table {
+	case "videofiles":
+		result, err := d.db.Exec("INSERT INTO videofiles ( filename, uploader, size, duration) VALUES ($1, $2, $3, $4)", data[0], data[1], data[2], data[3])
 		if err != nil {
-			return nil, err
+			return "", err
 		}
-		user := models.User{
-			Uuid:     uuid,
-			Fname:    fname,
-			Sname:    sname,
-			Login:    login,
-			Email:    email,
-			Password: password,
+		affected, err := result.RowsAffected()
+		if err != nil {
+			return fmt.Sprintln("Rows inserted: ", err.Error()), nil
 		}
-		users = append(users, user)
+		return fmt.Sprintln("Rows inserted: ", affected), nil
+	case "users":
+		result, err := d.db.Exec("INSERT INTO users (fname, sname, nickname, login, email, password) VALUES ($1, $2, $3, $4, $5, $6)", data[0], data[1], data[2], data[3], data[4], data[5])
+		if err != nil {
+			return "", err
+		}
+		affected, err := result.RowsAffected()
+		if err != nil {
+			return fmt.Sprintln("Rows inserted: ", err.Error()), nil
+		}
+		return fmt.Sprintln("Rows inserted: ", affected), nil
+	case "broadcasts":
+		log.Printf("INSERT INTO broadcasts (broadcaststarttime, broadcastendtime) VALUES (%s, %s)", data[0], data[1])
+		result, err := d.db.Exec("INSERT INTO broadcasts (broadcaststarttime, broadcastendtime) VALUES (?, ?);", data[0], data[1])
+		if err != nil {
+			return "", err
+		}
+		affected, err := result.RowsAffected()
+		if err != nil {
+			return fmt.Sprintln("Rows inserted: ", err.Error()), nil
+		}
+		return fmt.Sprintln("Rows inserted: ", affected), nil
+	case "broadcast_users":
+		result, err := d.db.Exec("INSERT INTO broadcast_users (broadcastid, userid) VALUES ($1, $2)", data[0], data[1])
+		if err != nil {
+			return "", err
+		}
+		affected, err := result.RowsAffected()
+		if err != nil {
+			return fmt.Sprintln("Rows inserted: ", err.Error()), nil
+		}
+		return fmt.Sprintln("Rows inserted: ", affected), nil
+	case "broadcast_files":
+		result, err := d.db.Exec("INSERT INTO broadcast_files (broadcastid, fileid) VALUES ($1, $2)", data[0], data[1])
+		if err != nil {
+			return "", err
+		}
+		affected, err := result.RowsAffected()
+		if err != nil {
+			return fmt.Sprintln("Rows inserted: ", err.Error()), nil
+		}
+		return fmt.Sprintln("Rows inserted: ", affected), nil
 	}
-	return users, nil
+	return "", fmt.Errorf("table %s not found", table)
 }
-func (database *DBController) SelectBroadcast() ([]models.Broadcast, error) {
-	rows, err := database.db.Query("SELECT * FROM broadcast")
-	if err != nil {
-		return nil, err
-	}
-	broadcast := make([]models.Broadcast, 0)
-	for rows.Next() {
-		var uuid, fileuuid, useruuid string
-		var starttime, endtime time.Time
 
-		err := rows.Scan(uuid, fileuuid, useruuid, starttime, endtime)
-		if err != nil {
-			return nil, err
-		}
-		b := models.Broadcast{
-			Uuid:               uuid,
-			FileUuid:           fileuuid,
-			UserUuid:           useruuid,
-			BroadcastStartTime: starttime,
-			BroadcastEndTime:   endtime,
-		}
-		broadcast = append(broadcast, b)
+func (d *DBController) DeleteRecord(table string, data ...string) (string, error) {
+	result, err := d.db.Exec("DELETE FROM videofiles WHERE id = $1", data[0])
+	if err != nil {
+		return "", err
 	}
-	return broadcast, nil
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Sprintln("Rows deleted: ", err.Error()), nil
+	}
+	return fmt.Sprintln("Rows deleted: ", affected), nil
+}
+
+func (d *DBController) UpdateRecord(table string, data ...string) (string, error) {
+	var result sql.Result
+	err := fmt.Errorf("")
+	switch table {
+	case "users":
+		result, err = d.db.Exec("UPDATE users SET firstname= ?,  secondaryname= ?,  nickname= ?, login= ?, email= ?, password= ?,  WHERE userid=?", data[1], data[2], data[3], data[4], data[5], data[6], data[0])
+	case "videofiles":
+		result, err = d.db.Exec("UPDATE videofiles SET filename= ?,  uploader= ?,  size= ?, duration= ? WHERE fileid=?", data[1], data[2], data[3], data[4], data[0])
+	case "broadcasts":
+		result, err = d.db.Exec("UPDATE broadcasts SET broadcaststarttime= ?,  broadcastendtime= ?  WHERE userid=?", data[1], data[2], data[0])
+	case "broadcasts_users":
+		result, err = d.db.Exec("UPDATE broadcasts_users SET broadcastid= ?,  userid= ?  WHERE userid=?", data[1], data[2], data[0])
+	case "broadcasts_files":
+		result, err = d.db.Exec("UPDATE broadcasts_files SET broadcastid= ?,  fileid= ?  WHERE userid=?", data[1], data[2], data[0])
+	}
+	if err != nil {
+		return "", err
+	}
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Sprintln("Rows updated: ", err.Error()), nil
+	}
+	return fmt.Sprintln("Rows updated: ", affected), nil
 }

@@ -1,8 +1,15 @@
 package messages
 
 templ Error(err error) {
-	<h1>Error</h1>
-	<p>
-		{ err.Error() }
-	</p>
+<h1>Error</h1>
+<p>
+	{ err.Error() }
+</p>
+}
+
+templ Message(msg string) {
+<h1>Message</h1>
+<p>
+	{ msg }
+</p>
 }

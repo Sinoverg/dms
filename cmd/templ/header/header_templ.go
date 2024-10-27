@@ -8,6 +8,11 @@ package header
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import (
+	"github.com/Cirqach/dms/cmd/templ/buttons"
+	"github.com/Cirqach/dms/cmd/templ/tables"
+)
+
 func Header() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -29,7 +34,59 @@ func Header() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"table-title\"><h1 id=\"table-name\">Table</h1><button id=\"change-table-button\" hx-get=\"/templ/change-table\" hx-target=\"#main\" hx-swap=\"innerHTML\">Open table</button></div><div class=\"function-elems\"><div class=\"search-field\"><input type=\"text\" id=\"search-field\" placeholder=\"Search\"></div><div class=\"button-container\"><button id=\"add-button\" hx-get=\"/templ/buttons/add/ask\" hx-target=\"#buttons\" hx-swap=\"innerHTML\">Add</button> <button id=\"delete-button\" hx-get=\"/templ/buttons/delete/ask\" hx-target=\"#buttons\" hx-swap=\"innerHTML\">Delete</button> <button id=\"update-button\" hx-get=\"/templ/buttons/update/ask\" hx-target=\"#buttons\" hx-swap=\"innerHTML\">Update</button></div></div><div id=\"buttons\"></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n\tfunction ShowDialog(name) {\n\t\tvar dialog = document.getElementById(name);\n\t\tdialog.showModal();\n\t}\n</script>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = buttons.DeleteDialog().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = buttons.UpdateTableDialog().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = buttons.AddVideofileDialog().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = buttons.UpdateTableDialog().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = buttons.AddUserDialog().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = buttons.AddBroadcastDialog().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = buttons.AddBroadcastsFilesDialog().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = buttons.AddBroadcastsUsersDialog().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container\"><nav><ul><li><strong id=\"tablename\">Table name</strong></li></ul><ul><li><details class=\"dropdown\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = tables.ChangeTablePage().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</details></li><li>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = buttons.AddButton().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</li><li><button id=\"delete-button\" onclick=\"ShowDialog(&#39;delete_dialog&#39;)\">Delete</button></li><li><button id=\"update-button\" onclick=\"ShowDialog(&#39;update_dialog_first_page&#39;)\">Update</button></li><li><div class=\"search-field\"><input type=\"search\" aria-label=\"Search\" name=\"search\" placeholder=\"Search\"></div></li></ul></nav></div><div id=\"buttons\" class=\"container\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

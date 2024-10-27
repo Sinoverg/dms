@@ -29,7 +29,7 @@ func ChangeTablePage() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"change-tables\"><table><tr><th>Users</th><th>Broadcast</th><th>Files</th></tr><tr><td><button hx-get=\"/tables/users\" hx-target=\"main\">Change</button></td><td><button hx-get=\"/tables/broadcast\" hx-target=\"main\">Change</button></td><td><button hx-get=\"/tables/files\" hx-target=\"main\">Change</button></td></tr></table></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<summary>Change table</summary><ul dir=\"rtl\"><script>\n\t\tfunction ChangeTableName(name) {\n\t\t\tconst tablename = document.getElementById(\"tablename\");\n\t\t\ttablename.innerHTML = name;\n\t\t}\n\t</script><li><a onClick=\"ChangeTableName(&#39;Users&#39;)\" hx-get=\"/templ/tables/users\" hx-target=\"main\" id=\"tua\">Users</a></li><li><a onClick=\"ChangeTableName(&#39;Broadcasts&#39;)\" hx-get=\"/templ/tables/broadcasts\" hx-target=\"main\">Broadcasts</a></li><li><a onClick=\"ChangeTableName(&#39;Videofiles&#39;)\" hx-get=\"/templ/tables/videofiles\" hx-target=\"main\">Videofiles</a></li><li><a onClick=\"ChangeTableName(&#39;Broadcasts_files&#39;)\" hx-get=\"/templ/tables/broadcasts_files\" hx-target=\"main\">Broadcasts_files</a></li><li><a onClick=\"ChangeTableName(&#39;Broadcasts_users&#39;)\" hx-get=\"/templ/tables/broadcasts_users\" hx-target=\"main\">Broadcasts_users</a></li></ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

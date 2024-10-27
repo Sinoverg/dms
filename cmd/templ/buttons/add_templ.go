@@ -8,7 +8,7 @@ package buttons
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func AddAskTable() templ.Component {
+func AddButton() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -29,7 +29,7 @@ func AddAskTable() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"update-element\"><h2>Update Record</h2><p>Enter table name which record you want to update:</p><select id=\"place-select\" multiple><option value=\"broadcast\">Broadcast</option> <option value=\"files\">Files</option> <option value=\"users\">Users</option></select> <button id=\"update-table-ask-submit\">Choose</button></div><script>\n\tdocument.getElementById(\"update-table-ask-submit\").addEventListener(\"click\", function() {\n        const selectedOptions = document.getElementById(\"place-select\").selectedOptions;\n        const selectedValues = Array.from(selectedOptions).map(option => option.value);\n\n\tfetch(\"/rest/add\", {\n  method: \"POST\",\n  body: JSON.stringify({\n    table: 1,\n    title: \"Fix my bugs\",\n    completed: false\n  }),\n  headers: {\n    \"Content-type\": \"application/json; charset=UTF-8\"\n  }\n});\n\t</script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n\tfunction CloseDialog(name) {\n\t\tvar dialog = document.getElementById(name);\n\t\tdialog.close();\n\t}\n</script><details class=\"dropdown\"><summary>Add</summary><ul dir=\"rtl\"><li><a onclick=\"AddUserDialog()\">Users</a></li><li><a onclick=\"AddBroadcastsDialog()\">Broadcasts</a></li><li><a onclick=\"AddVideofilesDialog()\">Videofiles</a></li><li><a onclick=\"AddBroadcastsFilesDialog()\">Broadcasts_files</a></li><li><a onclick=\"AddBroadcastsUsersDialog()\">Broadcasts_users</a></li></ul></details>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -37,7 +37,7 @@ func AddAskTable() templ.Component {
 	})
 }
 
-func AddBroadcast() templ.Component {
+func AddBroadcastsUsersDialog() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -58,7 +58,7 @@ func AddBroadcast() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div style=\"text-align: center;\"><h2>Add Record</h2><form id=\"add-form\"><input type=\"text\" name=\"file_uuid\" placeholder=\"First name\"> <input type=\"text\" name=\"user_uuid\" placeholder=\"Second name\"> <input type=\"text\" name=\"start_queue_time\" placeholder=\"Login\"> <input type=\"text\" name=\"end_queue_time\" placeholder=\"Email\"> <button type=\"submit\">Add</button></form></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<dialog id=\"add_broadcasts_users_dialog\"><article><header><button aria-label=\"Close\" rel=\"prev\" onclick=\"CloseDialog(&#39;add_broadcasts_users_dialog&#39;)\"></button><script>\n\t\t\t</script><p><strong><h2>Add broadcast_user</h2></strong></p></header><div style=\"text-align: center;\"><form id=\"buadd-form\" action=\"http://localhost:8080/api/add/broadcasts_users\" method=\"POST\"><input type=\"number\" name=\"broadcastId\" placeholder=\"Broadcast id\"> <input type=\"number\" name=\"userId\" placeholder=\"User id\"> <button type=\"submit\" onclick=\"AddBroadcastsUsersDialog()\">Add</button></form><div id=\"message\"></div></div></article></dialog>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -66,7 +66,7 @@ func AddBroadcast() templ.Component {
 	})
 }
 
-func AddFile() templ.Component {
+func AddBroadcastsFilesDialog() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -87,7 +87,7 @@ func AddFile() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div style=\"text-align: center;\"><h2>Add Record</h2><form id=\"add-form\"><input type=\"text\" name=\"file_name\" placeholder=\"First name\"> <input type=\"text\" name=\"file_size\" placeholder=\"Second name\"> <input type=\"text\" name=\"file_duration\" placeholder=\"Login\"> <button type=\"submit\">Add</button></form></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<dialog id=\"add_broadcasts_files_dialog\"><article><header><button onclick=\"CloseDialog(&#39;add_broadcasts_files_dialog&#39;)\" aria-label=\"Close\" rel=\"prev\"></button><p><strong><h2>Add broadcast_file</h2></strong></p></header><div style=\"text-align: center;\"><form id=\"bfadd-form\" action=\"http://localhost:8080/api/add/broadcasts\" method=\"POST\"><input type=\"number\" name=\"broadcast_id\" placeholder=\"Broadcast id\"> <input type=\"number\" name=\"videofile_id\" placeholder=\"Videofile id\"> <button type=\"submit\">Add</button></form></div></article></dialog>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -95,7 +95,7 @@ func AddFile() templ.Component {
 	})
 }
 
-func AddUser() templ.Component {
+func AddBroadcastDialog() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -116,7 +116,65 @@ func AddUser() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div style=\"text-align: center;\"><h2>Add Record</h2><form id=\"add-form\"><input type=\"text\" name=\"first_name\" placeholder=\"First name\"> <input type=\"text\" name=\"second_name\" placeholder=\"Second name\"> <input type=\"text\" name=\"login\" placeholder=\"Login\"> <input type=\"text\" name=\"email\" placeholder=\"Email\"> <input type=\"text\" name=\"password\" placeholder=\"Password\"> <button type=\"submit\">Add</button></form></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<dialog id=\"add_broadcast_dialog\"><article><header><button onclick=\"CloseDialog(&#39;add_broadcast_dialog&#39;)\" aria-label=\"Close\" rel=\"prev\"></button><p><strong><h2>Add broadcast</h2></strong></p></header><div style=\"text-align: center;\"><form id=\"badd-form\"><input type=\"datetime\" name=\"broadcast_start_time\" placeholder=\"Broadcast start time\"> <input type=\"datetime\" name=\"broadcast_end_time\" placeholder=\"Broadcast end time\"> <button type=\"submit\">Add</button></form></div></article></dialog>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func AddVideofileDialog() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<dialog id=\"add_videofile_dialog\"><article><header><button onclick=\"CloseDialog(&#39;add_videofile_dialog&#39;)\" aria-label=\"Close\" rel=\"prev\"></button><script>\n\t\t\t\tconst dialog = document.getElementById(\"add_videofile_dialog\");\n\t\t\t\tdialog.showModal;\n\t\t\t</script><p><strong><h2>Add videofile</h2></strong></p></header><div style=\"text-align: center;\"><form id=\"vadd-form\"><input type=\"text\" name=\"filename\" placeholder=\"File name\"> <input type=\"text\" name=\"uploader\" placeholder=\"Uploader id\"> <input type=\"text\" name=\"size\" placeholder=\"File size\"> <input type=\"number\" name=\"duration\" placeholder=\"File duration, mins\"> <button>Add</button></form><div id=\"message\"></div></div></article></dialog>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func AddUserDialog() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<dialog id=\"add_user_dialog\"><article><header><p><strong><h2>Add user</h2></strong></p></header><form id=\"uadd-form\"><input aria-describedby=\"add_u_first_name_error\" id=\"add_u_first_name\" type=\"text\" name=\"first_name\" placeholder=\"First name\"> <small id=\"add_u_first_name_error\">Enter valid name without numbers and special symbols</small> <input aria-describedby=\"add_u_second_name_error\" id=\"add_u_second_name\" type=\"text\" name=\"second_name\" placeholder=\"Second name\"> <small id=\"add_u_second_name_error\">Enter valid name without numbers and special symbols</small> <input aria-describedby=\"add_u_nickname_error\" id=\"add_u_nickname\" type=\"text\" name=\"nickname\" placeholder=\"Nickname\"> <small id=\"add_u_nickname_error\">Lenght of nickname can't be more than 15 symbols</small> <input aria-describedby=\"add_u_login_error\" id=\"add_u_login\" type=\"text\" name=\"login\" placeholder=\"Login\"> <small id=\"add_u_login_error\">Login can't contain spaces or special symbols</small> <input aria-describedby=\"add_u_email_error\" id=\"add_u_email\" type=\"email\" name=\"email\" placeholder=\"Email\"> <small id=\"add_u_email_error\">Enter valid email, for example \"unamed@gmail.com\"</small> <input id=\"add_u_password\" type=\"password\" name=\"password\" placeholder=\"Password\"> <button type=\"submit\">Add</button></form></article></dialog>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

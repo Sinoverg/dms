@@ -1,36 +1,55 @@
 package header
 
+import (
+"github.com/Cirqach/dms/cmd/templ/buttons"
+"github.com/Cirqach/dms/cmd/templ/tables"
+)
+
 templ Header() {
-	<div class="table-title">
-		<h1 id="table-name">Table</h1>
-		<button id="change-table-button" hx-get="/templ/change-table" hx-target="#main" hx-swap="innerHTML">
-			Open table
-		</button>
-	</div>
-	<div class="function-elems">
-		<div class="search-field">
-			<input type="text" id="search-field" placeholder="Search"/>
-		</div>
-		<div class="button-container">
-			<button
-				id="add-button"
-				hx-get="/templ/buttons/add/ask"
-				hx-target="#buttons"
-				hx-swap="innerHTML"
-			>Add</button>
-			<button
-				id="delete-button"
-				hx-get="/templ/buttons/delete/ask"
-				hx-target="#buttons"
-				hx-swap="innerHTML"
-			>Delete</button>
-			<button
-				id="update-button"
-				hx-get="/templ/buttons/update/ask"
-				hx-target="#buttons"
-				hx-swap="innerHTML"
-			>Update</button>
-		</div>
-	</div>
-	<div id="buttons"></div>
+<script>
+	function ShowDialog(name) {
+		var dialog = document.getElementById(name);
+		dialog.showModal();
+	}
+</script>
+@buttons.DeleteDialog()
+@buttons.UpdateTableDialog()
+@buttons.AddVideofileDialog()
+@buttons.UpdateTableDialog()
+@buttons.AddUserDialog()
+@buttons.AddBroadcastDialog()
+@buttons.AddBroadcastsFilesDialog()
+@buttons.AddBroadcastsUsersDialog()
+<div class="container">
+	<nav>
+		<ul>
+			<li>
+				<strong id="tablename">Table name</strong>
+			</li>
+		</ul>
+		<ul>
+			<li>
+				<details class="dropdown">
+					@tables.ChangeTablePage()
+				</details>
+			</li>
+			<li>
+				@buttons.AddButton()
+			</li>
+			<li>
+				<button id="delete-button" onclick="ShowDialog('delete_dialog')">Delete</button>
+			</li>
+			<li>
+				<button id="update-button"
+					onclick="ShowDialog('update_dialog_first_page')">Update</button>
+			</li>
+			<li>
+				<div class="search-field">
+					<input type="search" aria-label="Search" name="search" placeholder="Search" />
+				</div>
+			</li>
+		</ul>
+	</nav>
+</div>
+<div id="buttons" class="container"></div>
 }

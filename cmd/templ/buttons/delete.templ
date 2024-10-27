@@ -1,31 +1,115 @@
 package buttons
 
-templ DeleteButton() {
-	<script>
-	document.getElementById('delete-submit').addEventListener('click', function () {
-		const uuid = document.getElementById('delete-uuid').value;
-		const tableName = 'your_table_name'; // Replace with your table name
+templ DeleteDialog() {
+	<dialog id="delete_dialog">
+		<article>
+			<header>
+				<button aria-label="Close" rel="prev" onclick="CloseDialog('delete_dialog')"></button>
+				<p>
+					<strong>Delete</strong>
+				</p>
+			</header>
+			<fieldset>
+				<legend>Choose table:</legend>
+				<label>
+					<input type="radio" name="table" checked/>
+					Users
+				</label>
+				<label>
+					<input type="radio" name="table"/>
+					Broadcasts
+				</label>
+				<label>
+					<input type="radio" name="table"/>
+					Videofiles
+				</label>
+				<details class="dropdown">
+					<summary>
+						Other
+					</summary>
+					<ul dir="rtl">
+						<li>
+							<a
+								onclick="ShowDialog(delete_broadcasts_users_dialog); CloseDialog(delete_dialog);"
+							>Broadcasts_users</a>
+						</li>
+						<li>
+							<a
+								onclick="ShowDialog(delete_broadcasts_files_dialog);CloseDialog(delete_dialog);"
+							>Broadcasts_files</a>
+						</li>
+					</ul>
+				</details>
+			</fieldset>
+			<input/>
+			<footer>
+				<button class="secondary" onclick="CloseDialog('delete_dialog')">
+					Cancel
+				</button>
+				<button>Delete</button>
+			</footer>
+		</article>
+	</dialog>
+}
 
-		fetch('/delete', {
-			method: 'DELETE',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({uuid, tableName})
-		})
-			.then(response => response.json())
-			.then(data => {
-				console.log(data); // Handle the response data
-			})
-			.catch(error => {
-				console.error(error);
-			});
-	});
-</script>
-	<div id="delete-popup" class="popup">
-		<h2>Delete Record</h2>
-		<p>Enter the UUID of the record you want to delete:</p>
-		<input type="text" id="delete-uuid"/>
-		<button id="delete-submit">Delete</button>
-	</div>
+templ DeleteBroadcastsFilesDialog() {
+	<dialog id="delete_broadcasts_files_dialog">
+		<article>
+			<header>
+				<button
+					onclick="CloseDialog('delete_broadcasts_files_dialog')"
+					class="close"
+					aria-label="Close"
+					rel="prev"
+				></button>
+				<p>
+					<strong>
+						<h2>Add user</h2>
+					</strong>
+				</p>
+			</header>
+			<div style="text-align: center;">
+				<form id="add-form">
+					<input type="text" name="first_name" placeholder="First name"/>
+					<input type="text" name="second_name" placeholder="Second name"/>
+					<input type="text" name="nickname" placeholder="Nickname"/>
+					<input type="text" name="login" placeholder="Login"/>
+					<input type="email" name="email" placeholder="Email"/>
+					<input type="password" name="password" placeholder="Password"/>
+					<button type="submit">Add</button>
+				</form>
+			</div>
+		</article>
+	</dialog>
+}
+
+templ DeleteBroadcastsUsersDialog() {
+	<dialog id="delete_broadcasts_users_dialog">
+		<article>
+			<header>
+				<button
+					onclick="CloseDialog('delete_broadcasts_users_dialog')"
+					class="close"
+					aria-label="Close"
+					rel="prev"
+				></button>
+				<p>
+					<strong>
+						<h2>Add user</h2>
+					</strong>
+				</p>
+			</header>
+			<div style="text-align: center;">
+				<form id="add-form">
+					<input type="text" name="first_name" placeholder="First name"/>
+					<input type="text" name="second_name" placeholder="Second name"/>
+					<input type="text" name="nickname" placeholder="Nickname"/>
+					<input type="text" name="login" placeholder="Login"/>
+					<input type="email" name="email" placeholder="Email"/>
+					<input type="password" name="password" placeholder="Password"/>
+					<button type="submit">Add</button>
+				</form>
+			</div>
+		</article>
+	</dialog>
 }
