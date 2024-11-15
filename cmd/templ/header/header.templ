@@ -6,20 +6,27 @@ import (
 )
 
 templ Header() {
+@buttons.UpdateTableDialog()
+@buttons.UpdateTableDialog()
+@buttons.AddVideofileDialog()
+@buttons.AddUserDialog()
+@buttons.AddBroadcastDialog()
+@buttons.AddBroadcastsFilesDialog()
+@buttons.AddBroadcastsUsersDialog()
+@buttons.DeleteDialog()
 <script>
 	function ShowDialog(name) {
 		var dialog = document.getElementById(name);
 		dialog.showModal();
 	}
 </script>
-@buttons.DeleteDialog()
-@buttons.UpdateTableDialog()
-@buttons.AddVideofileDialog()
-@buttons.UpdateTableDialog()
-@buttons.AddUserDialog()
-@buttons.AddBroadcastDialog()
-@buttons.AddBroadcastsFilesDialog()
-@buttons.AddBroadcastsUsersDialog()
+	<script>
+
+	function CloseDialog(name) {
+		var dialog = document.getElementById(name);
+		dialog.close();
+	}
+</script>
 <div class="container">
 	<nav>
 		<ul>
@@ -35,6 +42,7 @@ templ Header() {
 			</li>
 			<li>
 				@buttons.AddButton()
+
 			</li>
 			<li>
 				<button id="delete-button" onclick="ShowDialog('delete_dialog')">Delete</button>

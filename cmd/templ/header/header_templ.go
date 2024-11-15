@@ -34,11 +34,7 @@ func Header() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n\tfunction ShowDialog(name) {\n\t\tvar dialog = document.getElementById(name);\n\t\tdialog.showModal();\n\t}\n</script>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = buttons.DeleteDialog().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = buttons.UpdateTableDialog().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -47,10 +43,6 @@ func Header() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = buttons.AddVideofileDialog().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = buttons.UpdateTableDialog().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -70,7 +62,11 @@ func Header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container\"><nav><ul><li><strong id=\"tablename\">Table name</strong></li></ul><ul><li><details class=\"dropdown\">")
+		templ_7745c5c3_Err = buttons.DeleteDialog().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n\tfunction ShowDialog(name) {\n\t\tvar dialog = document.getElementById(name);\n\t\tdialog.showModal();\n\t}\n</script><script>\n\n\tfunction CloseDialog(name) {\n\t\tvar dialog = document.getElementById(name);\n\t\tdialog.close();\n\t}\n</script><div class=\"container\"><nav><ul><li><strong id=\"tablename\">Table name</strong></li></ul><ul><li><details class=\"dropdown\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

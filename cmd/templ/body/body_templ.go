@@ -31,7 +31,7 @@ func Body() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Document</title><link rel=\"stylesheet\" href=\"http://localhost:1337/static/css/pico.min.css\"><script href=\"https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css\"></script><script src=\"https://unpkg.com/htmx.org@1.9.5\" integrity=\"sha384-xcuj3WpfgjlKF+FXhSQFQ0ZNr39ln+hwjN3npfM9VBnUskLolQAcN80McRIVOPuO\" crossorigin=\"anonymous\"></script></head><body><header class=\"container-fluid\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Document</title><link rel=\"stylesheet\" href=\"http://localhost:1337/static/css/pico.min.css\"><script src=\"https://unpkg.com/htmx.org@1.9.5\" integrity=\"sha384-xcuj3WpfgjlKF+FXhSQFQ0ZNr39ln+hwjN3npfM9VBnUskLolQAcN80McRIVOPuO\" crossorigin=\"anonymous\"></script></head><body><header class=\"container-fluid\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -39,7 +39,7 @@ func Body() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</header><main id=\"main\" class=\"container-fluid\"><h1 style=\"text-align: center;\">Select table</h1><div class=\"change-tables\"><table class=\"grid\"><tr><th>Users</th><th>Broadcast</th><th>Files</th><th>Broadcast_files</th><th>Broadcast_users</th></tr><tr><td><button>Change</button></td><td><button>Change</button></td><td><button>Change</button></td><td><button>Change</button></td><td><button>Change</button></td></tr></table></div></main><footer></footer></body><script src=\"http://localhost:1337/static/js/add_buttons.js\"></script></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</header><main id=\"main\" class=\"container-fluid\"><h1 style=\"text-align: center;\">Select table</h1><div class=\"change-tables\"><table class=\"grid\"><tr><th>Users</th><th>Broadcast</th><th>Files</th><th>Broadcast_files</th><th>Broadcast_users</th></tr><tr><td><button>Change</button></td><td><button>Change</button></td><td><button>Change</button></td><td><button>Change</button></td><td><button>Change</button></td></tr></table></div></main><footer></footer></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

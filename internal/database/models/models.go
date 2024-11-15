@@ -1,7 +1,5 @@
 package models
 
-import "time"
-
 type Record interface {
 }
 
@@ -17,8 +15,8 @@ type User struct {
 
 type Broadcast struct {
 	Id                 string    `json:"id"`
-	BroadcastStartTime time.Time `json:"broadcast_start_time"`
-	BroadcastEndTime   time.Time `json:"broadcast_end_time"`
+		BroadcastStartTime string `json:"b_start_time"`
+		BroadcastEndTime   string `json:"b_end_time"`
 }
 
 type Videofile struct {

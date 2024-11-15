@@ -47,8 +47,8 @@ templ Broadcast(broadcast []models.Broadcast) {
 					<h4 style="text-align: center;">{ b.Id }</h4>
 				</header>
 				<div style="margin-left: 5px;">
-					<p>Broadcast start time: { b.BroadcastStartTime.String() }</p>
-					<p>Broadcast end time: { b.BroadcastEndTime.String() }</p>
+					<p>Broadcast start time: { b.BroadcastStartTime }</p>
+					<p>Broadcast end time: { b.BroadcastEndTime }</p>
 				</div>
 			</article>
 		}

@@ -3,28 +3,26 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
-	"github.com/Cirqach/dms/cmd/templ/messages"
 	"github.com/Cirqach/dms/cmd/templ/tables"
 	"github.com/Cirqach/dms/internal/database"
 	"github.com/Cirqach/dms/internal/database/models"
+	"github.com/rs/zerolog/log"
 )
 
-func RootHandler(w http.ResponseWriter, r *http.Request) {
 
-}
 
 func TableHandler(db *database.DBController) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Get request: ", r.URL.Path)
 		table := r.PathValue("table")
 		rows, err := db.SelectAll(table)
 		if err != nil {
-			messages.Error(err).Render(r.Context(), w)
-			return
+		log.Err(err).Msg("Error selecting all records from " + table +" table")
+					w.WriteHeader(http.StatusInternalServerError)
+					w.Write([]byte("Internal error, try later"))
+					return
 		}
 		switch table {
 		case "videofiles":
@@ -33,7 +31,9 @@ func TableHandler(db *database.DBController) func(w http.ResponseWriter, r *http
 				var id, filename, uploader, size, duration string
 				err := rows.Scan(&id, &filename, &uploader, &size, &duration)
 				if err != nil {
-					messages.Error(err).Render(r.Context(), w)
+					log.Err(err).Msg("Error scanning videofiles rows")
+					w.WriteHeader(http.StatusInternalServerError)
+					w.Write([]byte("Internal error, try later"))
 					return
 				}
 				file := models.Videofile{
@@ -53,7 +53,9 @@ func TableHandler(db *database.DBController) func(w http.ResponseWriter, r *http
 				var id, fname, sname, nickname, login, email, password string
 				err := rows.Scan(&id, &fname, &sname, &nickname, &login, &email, &password)
 				if err != nil {
-					messages.Error(err).Render(r.Context(), w)
+					log.Err(err).Msg("Error scanning users rows")
+					w.WriteHeader(http.StatusInternalServerError)
+					w.Write([]byte("Internal error, try later"))
 					return
 				}
 				user := models.User{
@@ -72,11 +74,12 @@ func TableHandler(db *database.DBController) func(w http.ResponseWriter, r *http
 		case "broadcasts":
 			broadcasts := make([]models.Broadcast, 0)
 			for rows.Next() {
-				var id string
-				var starttime, endtime time.Time
+				var id, starttime, endtime string 
 				err := rows.Scan(&id, &starttime, &endtime)
 				if err != nil {
-					messages.Error(err).Render(r.Context(), w)
+					log.Err(err).Msg("Error scanning broadcasts rows")
+					w.WriteHeader(http.StatusInternalServerError)
+					w.Write([]byte("Internal error, try later"))
 					return
 				}
 				broadcast := models.Broadcast{
@@ -94,7 +97,9 @@ func TableHandler(db *database.DBController) func(w http.ResponseWriter, r *http
 				var broadcastid, userid string
 				err := rows.Scan(&broadcastid, &userid)
 				if err != nil {
-					messages.Error(err).Render(r.Context(), w)
+					log.Err(err).Msg("Error scanning broadcasts_users rows")
+					w.WriteHeader(http.StatusInternalServerError)
+					w.Write([]byte("Internal error, try later"))
 					return
 				}
 				broadcast := models.BroadcastUsers{
@@ -111,7 +116,9 @@ func TableHandler(db *database.DBController) func(w http.ResponseWriter, r *http
 				var broadcastid, fileid string
 				err := rows.Scan(&broadcastid, &fileid)
 				if err != nil {
-					messages.Error(err).Render(r.Context(), w)
+					log.Err(err).Msg("Error scanning broadcasts_files rows")
+					w.WriteHeader(http.StatusInternalServerError)
+					w.Write([]byte("Internal error, try later"))
 					return
 				}
 				bf := models.BroadcastFiles{
@@ -126,101 +133,241 @@ func TableHandler(db *database.DBController) func(w http.ResponseWriter, r *http
 	}
 }
 
-func ApiHandler(db *database.DBController) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Take %s request from %s\n", r.Method, r.URL)
-		function := r.PathValue("function")
-		table := r.PathValue("table")
-		switch function {
-		case "add":
-			var msg string
-			switch table {
-			case "users":
-				fname := r.FormValue("first_name")
-				sname := r.FormValue("second_name")
-				nick := r.FormValue("nickname")
-				login := r.FormValue("login")
-				email := r.FormValue("email")
-				pass := r.FormValue("password")
-				msg, err := db.AddRecord(table, fname, sname, nick, login, email, pass)
-				if err != nil {
-					messages.Error(err).Render(r.Context(), w)
-					fmt.Printf("Error when try to add user: %v\n	Table: %s\n	Body: %v\n", err, r.Body)
+func ApiAddUser(db *database.DBController) func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request){
+				user := &models.User{}
+				if err := json.NewDecoder(r.Body).Decode(user); err != nil {
+					log.Err(err).Msg("Error decoding user from request body")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
 					return
 				}
-				messages.Message(msg).Render(r.Context(), w)
-				return
-			case "videofiles":
-				videofile := &models.Videofile{}
-				json.NewDecoder(r.Body).Decode(videofile)
-				msg, err := db.AddRecord(table, videofile.Filename, videofile.Uploader, videofile.Size, videofile.Duration)
-				if err != nil {
-					fmt.Printf("Error when try to add user: %v\n	Table: %s\n	Body: %v\n", err, table, videofile)
+				if err := db.AddUser(user.Fname, user.Sname, user.Nickname, user.Login, user.Email, user.Password); err != nil {
+					log.Err(err).Msg("Error adding user to database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
 				}
-				w.Write([]byte(msg))
-				return
-			case "broadcasts":
-				broadcast := &models.Broadcast{}
-				json.NewDecoder(r.Body).Decode(broadcast)
-				msg, err := db.AddRecord(table, broadcast.BroadcastStartTime.String(), broadcast.BroadcastEndTime.String())
-				if err != nil {
-					fmt.Printf("Error when try to add user: %v\n	Table: %s\n	Body: %v\n", err, table, broadcast)
-				}
-				w.Write([]byte(msg))
-				return
-			case "broadcasts_files":
-				bf := &models.BroadcastFiles{}
-				json.NewDecoder(r.Body).Decode(bf)
-				msg, err := db.AddRecord(table, bf.BroadcastId, bf.VideofileId)
-				if err != nil {
-					fmt.Printf("Error when try to add user: %v\n	Table: %s\n	Body: %v\n", err, table, bf)
-				}
-				w.Write([]byte(msg))
-				return
-			case "broadcasts_users":
-
-				bu := &models.BroadcastUsers{}
-				json.NewDecoder(r.Body).Decode(bu)
-				msg, err := db.AddRecord(table, bu.BroadcastId, bu.UserId)
-				if err != nil {
-					fmt.Printf("Error when try to add user: %v\n	Table: %s\n	Body: %v\n", err, table, bu)
-				}
-				w.Write([]byte(msg))
-				return
-			}
-			messages.Message(msg).Render(r.Context(), w)
-		case "delete":
-			msg, err := db.DeleteRecord(table, r.FormValue("id"))
-			if err != nil {
-				messages.Error(err).Render(r.Context(), w)
-			}
-			messages.Message(msg).Render(r.Context(), w)
-		case "update":
-			msg, err := db.UpdateRecord(table, r.FormValue("id"), r.FormValue("fname"), r.FormValue("sname"), r.FormValue("nickname"), r.FormValue("login"), r.FormValue("email"), r.FormValue("password"))
-			if err != nil {
-				messages.Error(err).Render(r.Context(), w)
-			}
-			messages.Message(msg).Render(r.Context(), w)
-		}
-	}
+				log.Info().Msg(fmt.Sprintf("User added: %v",user))
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("User added successfully"))
 }
+}
+func ApiAddVideofile(db *database.DBController) func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request){
+				videofile := &models.Videofile{}
+				if err := json.NewDecoder(r.Body).Decode(videofile); err != nil{
+					log.Err(err).Msg("Error decoding videofile from request body")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+				}
+				if err := db.AddVideofile(videofile.Filename, videofile.Uploader, videofile.Size, videofile.Duration); err != nil {
+					log.Err(err).Msg("Error adding videofile to database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+				}
+				log.Info().Msg(fmt.Sprintf("Videofile added: %v",videofile))
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("Videofile added successfully"))
+	}}
+	func ApiAddBroadcast(db *database.DBController) func(w http.ResponseWriter, r *http.Request) {
+		return func(w http.ResponseWriter, r *http.Request) {
+			b := &models.Broadcast{}
+	
+			// Decode JSON body into `b`
+			if err := json.NewDecoder(r.Body).Decode(b); err != nil {
+				log.Err(err).Msg("Error decoding broadcast from request body")
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte(err.Error()))
+				return
+			}
+	
+			// Define your custom format for parsing
+			const timeFormat = "2006-01-02T15:04" // Matches the format sent from HTML form
 
-func ButtonHandler(w http.ResponseWriter, r *http.Request) {
-	button := r.PathValue("Button")
-	tp := r.PathValue("Type")
-	// log.Println("button: ", button, " type: ", tp)
-	switch button {
-	case "delete":
-		switch tp {
-		default:
-			messages.Error(fmt.Errorf("table %s not found", tp)).Render(r.Context(), w)
-			return
+			bst, err := time.Parse(timeFormat, b.BroadcastStartTime)
+			if err != nil {
+				log.Err(err).Msg("Invalid BroadcastStartTime format")
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Invalid BroadcastStartTime format: " + err.Error()))
+				return
+			}
+			
+			bet, err := time.Parse(timeFormat, b.BroadcastEndTime)
+			if err != nil {
+				log.Err(err).Msg("Invalid BroadcastEndTime format")
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Invalid BroadcastEndTime format: " + err.Error()))
+				return
+			}
+			if bst.After(bet) {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Broadcast start time must be before end time"))
+				return
+			}
+							
+			// Call AddBroadcast with parsed times
+			if err := db.AddBroadcast(bst, bet); err != nil {
+				log.Err(err).Msg("Error adding broadcast to database")
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte(err.Error()))
+				return
+			}
+	
+			log.Print(fmt.Sprintf("Broadcast added: %v", b))
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("Broadcast added successfully"))
 		}
-	case "update":
-		// buttons.UpdateTableDialog().Render(r.Context(), w)
-		return
-	default:
-		messages.Error(fmt.Errorf("Wtf you want from me????")).Render(r.Context(), w)
 	}
-
+func ApiAddBroadcastsUsers(db *database.DBController) func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request){
+				bu := &models.BroadcastUsers{}
+				if err := json.NewDecoder(r.Body).Decode(bu); err != nil {
+					log.Err(err).Msg("Error decoding broadcasts_users from request body")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+				}
+				if err := db.AddBroadcastUser(bu.BroadcastId, bu.UserId);err != nil {
+					log.Err(err).Msg("Error adding broadcasts_users to database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+				}
+				log.Info().Msg(fmt.Sprintf("Broadcasts_users record added: %v",bu))
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("Broadcasts_users record added successfully"))
+	}}
+func ApiAddBroadcastsFiles(db *database.DBController) func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request){
+				bf := &models.BroadcastFiles{}
+				if err := json.NewDecoder(r.Body).Decode(bf); err != nil{
+					log.Err(err).Msg("Error decoding broadcasts_files from request body")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+				}
+				if err := db.AddBroadcastFile(bf.BroadcastId, bf.VideofileId); err != nil {
+					log.Err(err).Msg("Error adding broadcasts_files to database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+				}
+				log.Info().Msg(fmt.Sprintf("Broadcasts_files record added: %v",bf))
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("Broadcasts_files record added successfully"))
+	}}
+func ApiDelete(db *database.DBController) func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request){
+		switch r.PathValue("table"){
+		case "broadcasts_users":
+				bu := &models.BroadcastUsers{}
+			if err := json.NewDecoder(r.Body).Decode(bu); err != nil {
+					log.Err(err).Msg("Error decoding broadcasts_users from request body")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+			}
+			if err := db.DeleteBroadcastUser(bu.BroadcastId,bu.UserId); err != nil {
+					log.Err(err).Msg("Error deleting broadcasts_users from database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+			}
+			log.Info().Msg(fmt.Sprintf("Broadcasts_users %v was deleted",bu))
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("Broadcasts_users record was successfully deleted"))
+		case "broadcasts_files":
+				bf := &models.BroadcastFiles{}
+				if err := json.NewDecoder(r.Body).Decode(bf); err != nil{
+					log.Err(err).Msg("Error decoding broadcasts_files from request body")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+				}
+			if err := db.DeleteBroadcastFile(bf.BroadcastId,bf.VideofileId); err != nil {
+					log.Err(err).Msg("Error deleting broadcasts_files from database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+			}
+			log.Info().Msg(fmt.Sprintf("Broadcasts_files %v was deleted",bf))
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("Broadcasts_files record was successfully deleted"))
+		default:
+			table := r.PathValue("table")
+			id := r.PathValue("id")
+			if err := db.DeleteRecord(table, id); err != nil {
+					log.Err(err).Msg("Error deleting record from database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+				}
+			log.Info().Msg(fmt.Sprintf("Record with id %d was deleted from %s table",table,id))
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(table +" with id "+ id +" was successfully deleted"))
+		}
+}
+}
+func ApiUpdateUser(db *database.DBController) func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request){
+				u := &models.User{}
+				if err := json.NewDecoder(r.Body).Decode(u); err != nil{
+					log.Err(err).Msg("Error decoding user from request body")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+				}
+			if err := db.UpdateUser(u.Id,u.Fname,u.Sname,u.Nickname,u.Login,u.Email,u.Password); err != nil {
+					log.Err(err).Msg("Error updating user in database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+			}
+			log.Info().Msg(fmt.Sprintf("User record updated to %v",u))
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("User was successfully updated"))
+}
+}
+func ApiUpdateVideofile(db *database.DBController) func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request){
+				v := &models.Videofile{}
+			if err := json.NewDecoder(r.Body).Decode(v); err != nil{
+					log.Err(err).Msg("Error decoding videofile from request body")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+			}
+			if err := db.UpdateVideoFile(v.Id,v.Filename,v.Uploader,v.Size,v.Duration); err != nil {
+					log.Err(err).Msg("Error updating videofile in database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+			}
+			log.Info().Msg(fmt.Sprintf("Videofile record updated to %v",v))
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("Videofile was successfully updated"))
+}
+}
+func ApiUpdateBroadcast(db *database.DBController) func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request){
+				b := &models.Broadcast{}
+				if err := json.NewDecoder(r.Body).Decode(b); err != nil{
+					log.Err(err).Msg("Error decoding broadcast from request body")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+				}
+			if err := db.UpdateBroadcast(b.Id,b.BroadcastStartTime,b.BroadcastEndTime); err != nil {
+					log.Err(err).Msg("Error updating broadcast in database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+			}
+			log.Info().Msg(fmt.Sprintf("Broadcast record updated to %v",b))
+			w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Broadcast was successfully update"))
+}
 }
