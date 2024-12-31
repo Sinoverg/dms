@@ -9,19 +9,19 @@ templ DeleteDialog() {
 					<strong>Delete</strong>
 				</p>
 			</header>
-			<fieldset>
+			<fieldset id="table_set">
 				<legend>Choose table:</legend>
 				<label>
 					<input type="radio" name="table" checked/>
-					Users
+					users
 				</label>
 				<label>
 					<input type="radio" name="table"/>
-					Broadcasts
+					broadcasts
 				</label>
 				<label>
 					<input type="radio" name="table"/>
-					Videofiles
+					videofiles
 				</label>
 				<details class="dropdown">
 					<summary>
@@ -30,26 +30,29 @@ templ DeleteDialog() {
 					<ul dir="rtl">
 						<li>
 							<a
-								onclick="ShowDialog(delete_broadcasts_users_dialog); CloseDialog(delete_dialog);"
-							>Broadcasts_users</a>
+								onclick="ShowDialog('delete_broadcasts_users_dialog'); CloseDialog('delete_dialog');"
+							>broadcasts_users</a>
 						</li>
 						<li>
 							<a
-								onclick="ShowDialog(delete_broadcasts_files_dialog);CloseDialog(delete_dialog);"
-							>Broadcasts_files</a>
+								onclick="ShowDialog('delete_broadcasts_files_dialog');CloseDialog('delete_dialog');"
+							>broadcasts_files</a>
 						</li>
 					</ul>
 				</details>
 			</fieldset>
-			<input/>
+			<input id="delete_id" type="number" min="0"/>
 			<footer>
 				<button class="secondary" onclick="CloseDialog('delete_dialog')">
 					Cancel
 				</button>
-				<button>Delete</button>
+				<button onclick="Delete()" id="dialog_delete_button">Delete</button>
 			</footer>
+		<div id="delete-message">
+		</div>
 		</article>
 	</dialog>
+	<script src="http://localhost:1337/static/js/buttons/delete/delete.js"/>
 }
 
 templ DeleteBroadcastsFilesDialog() {
@@ -64,18 +67,14 @@ templ DeleteBroadcastsFilesDialog() {
 				></button>
 				<p>
 					<strong>
-						<h2>Add user</h2>
+						<h2>Delete broadcasts_files</h2>
 					</strong>
 				</p>
 			</header>
 			<div style="text-align: center;">
 				<form id="add-form">
-					<input type="text" name="first_name" placeholder="First name"/>
-					<input type="text" name="second_name" placeholder="Second name"/>
-					<input type="text" name="nickname" placeholder="Nickname"/>
-					<input type="text" name="login" placeholder="Login"/>
-					<input type="email" name="email" placeholder="Email"/>
-					<input type="password" name="password" placeholder="Password"/>
+					<input type="number" name="broadcastid" placeholder="Broadcast id"/>
+					<input type="number" name="fileid" placeholder="File id"/>
 					<button type="submit">Add</button>
 				</form>
 			</div>
@@ -95,19 +94,21 @@ templ DeleteBroadcastsUsersDialog() {
 				></button>
 				<p>
 					<strong>
-						<h2>Add user</h2>
+						<h2>Delete broadcasts_users</h2>
 					</strong>
 				</p>
 			</header>
 			<div style="text-align: center;">
 				<form id="add-form">
-					<input type="text" name="first_name" placeholder="First name"/>
-					<input type="text" name="second_name" placeholder="Second name"/>
-					<input type="text" name="nickname" placeholder="Nickname"/>
-					<input type="text" name="login" placeholder="Login"/>
-					<input type="email" name="email" placeholder="Email"/>
-					<input type="password" name="password" placeholder="Password"/>
-					<button type="submit">Add</button>
+					<input type="number" name="broadcastid" placeholder="Broadcast id"/>
+					<input type="number" name="userid" placeholder="User id"/>
+<button 
+        type="submit" 
+        hx-delete="http://localhost:1337/api/delete/broadcasts_users/" 
+        hx-include="[name='broadcastid'], [name='userid']"
+        hx-params="serialize">
+        Delete
+    </button>
 				</form>
 			</div>
 		</article>

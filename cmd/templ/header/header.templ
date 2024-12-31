@@ -6,14 +6,7 @@ import (
 )
 
 templ Header() {
-@buttons.UpdateTableDialog()
-@buttons.UpdateTableDialog()
-@buttons.AddVideofileDialog()
-@buttons.AddUserDialog()
-@buttons.AddBroadcastDialog()
-@buttons.AddBroadcastsFilesDialog()
-@buttons.AddBroadcastsUsersDialog()
-@buttons.DeleteDialog()
+
 <script>
 	function ShowDialog(name) {
 		var dialog = document.getElementById(name);
@@ -27,11 +20,21 @@ templ Header() {
 		dialog.close();
 	}
 </script>
+@buttons.AddUserDialog()
+@buttons.AddVideofileDialog()
+@buttons.AddBroadcastDialog()
+@buttons.AddBroadcastsFilesDialog()
+@buttons.AddBroadcastsUsersDialog()
+@buttons.DeleteBroadcastsFilesDialog()
+@buttons.DeleteBroadcastsUsersDialog()
+@buttons.DeleteDialog()
+
+@buttons.UpdateTableDialog()
 <div class="container">
 	<nav>
 		<ul>
 			<li>
-				<strong id="tablename">Table name</strong>
+				<strong id="tablename">Database Managment System</strong>
 			</li>
 		</ul>
 		<ul>
@@ -42,19 +45,8 @@ templ Header() {
 			</li>
 			<li>
 				@buttons.AddButton()
-
 			</li>
 			<li>
-				<button id="delete-button" onclick="ShowDialog('delete_dialog')">Delete</button>
-			</li>
-			<li>
-				<button id="update-button"
-					onclick="ShowDialog('update_dialog_first_page')">Update</button>
-			</li>
-			<li>
-				<div class="search-field">
-					<input type="search" aria-label="Search" name="search" placeholder="Search" />
-				</div>
 			</li>
 		</ul>
 	</nav>

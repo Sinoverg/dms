@@ -24,15 +24,15 @@ templ Body() {
 							<th>Users</th>
 							<th>Broadcast</th>
 							<th>Files</th>
-							<th>Broadcast_files</th>
-							<th>Broadcast_users</th>
+							<th>Broadcasts_files</th>
+							<th>Broadcasts_users</th>
 						</tr>
 						<tr>
-							<td><button>Change</button></td>
-							<td><button>Change</button></td>
-							<td><button>Change</button></td>
-							<td><button>Change</button></td>
-							<td><button>Change</button></td>
+							<td><button onClick="ChangeTableName('Users')" hx-get="/templ/tables/users" hx-target="main">Change</button></td>
+							<td><button onClick="ChangeTableName('Broadcasts')" hx-get="/templ/tables/broadcasts" hx-target="main">Change</button></td>
+							<td><button onClick="ChangeTableName('Files')" hx-get="/templ/tables/videofiles" hx-target="main">Change</button></td>
+							<td><button onClick="ChangeTableName('Broadcasts_files')" hx-get="/templ/tables/broadcasts_files" hx-target="main">Change</button></td>
+							<td><button onClick="ChangeTableName('Broadcasts_users')" hx-get="/templ/tables/broadcasts_users" hx-target="main">Change</button></td>
 						</tr>
 					</table>
 				</div>

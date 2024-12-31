@@ -34,19 +34,15 @@ func Header() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = buttons.UpdateTableDialog().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = buttons.UpdateTableDialog().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = buttons.AddVideofileDialog().Render(ctx, templ_7745c5c3_Buffer)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n\tfunction ShowDialog(name) {\n\t\tvar dialog = document.getElementById(name);\n\t\tdialog.showModal();\n\t}\n</script><script>\n\n\tfunction CloseDialog(name) {\n\t\tvar dialog = document.getElementById(name);\n\t\tdialog.close();\n\t}\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = buttons.AddUserDialog().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = buttons.AddVideofileDialog().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -62,11 +58,23 @@ func Header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = buttons.DeleteBroadcastsFilesDialog().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = buttons.DeleteBroadcastsUsersDialog().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = buttons.DeleteDialog().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n\tfunction ShowDialog(name) {\n\t\tvar dialog = document.getElementById(name);\n\t\tdialog.showModal();\n\t}\n</script><script>\n\n\tfunction CloseDialog(name) {\n\t\tvar dialog = document.getElementById(name);\n\t\tdialog.close();\n\t}\n</script><div class=\"container\"><nav><ul><li><strong id=\"tablename\">Table name</strong></li></ul><ul><li><details class=\"dropdown\">")
+		templ_7745c5c3_Err = buttons.UpdateTableDialog().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container\"><nav><ul><li><strong id=\"tablename\">Database Managment System</strong></li></ul><ul><li><details class=\"dropdown\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -82,7 +90,7 @@ func Header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</li><li><button id=\"delete-button\" onclick=\"ShowDialog(&#39;delete_dialog&#39;)\">Delete</button></li><li><button id=\"update-button\" onclick=\"ShowDialog(&#39;update_dialog_first_page&#39;)\">Update</button></li><li><div class=\"search-field\"><input type=\"search\" aria-label=\"Search\" name=\"search\" placeholder=\"Search\"></div></li></ul></nav></div><div id=\"buttons\" class=\"container\"></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</li><li></li></ul></nav></div><div id=\"buttons\" class=\"container\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

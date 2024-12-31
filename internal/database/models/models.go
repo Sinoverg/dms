@@ -3,6 +3,11 @@ package models
 type Record interface {
 }
 
+type Delete struct{
+	Id string `json:"id"`
+	Table string `json:"table"`
+}
+
 type User struct {
 	Id       string `json:"id"`
 	Fname    string `json:"first_name"`

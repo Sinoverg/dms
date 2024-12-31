@@ -12,34 +12,34 @@ vadd_form.addEventListener('submit', (event) => {
 
   // Validate filename (only letters and spaces)
   if (!/^[a-zA-Z\s]+$/.test(filename)) {
-    document.getElementById('filename').setAttribute("aria-invalid", "true");
+    document.getElementById('add_v_videofilename').setAttribute("aria-invalid", "true");
     return;
   } else {
-    document.getElementById('filename').setAttribute("aria-invalid", "false");
+    document.getElementById('add_v_videofilename').setAttribute("aria-invalid", "false");
   }
 
   // Validate uploader ID (positive integer)
   if (!/^\d+$/.test(uploader) || uploader <= 0) {
-    document.getElementById('uploader').setAttribute("aria-invalid", "true");
+    document.getElementById('add_v_uploader').setAttribute("aria-invalid", "true");
     return;
   } else {
-    document.getElementById('uploader').setAttribute("aria-invalid", "false");
+    document.getElementById('add_v_uploader').setAttribute("aria-invalid", "false");
   }
 
   // Validate file size (positive number)
   if (size <= 0) {
-    document.getElementById('size').setAttribute("aria-invalid", "true");
+    document.getElementById('add_v_size').setAttribute("aria-invalid", "true");
     return;
   } else {
-    document.getElementById('size').setAttribute("aria-invalid", "false");
+    document.getElementById('add_v_size').setAttribute("aria-invalid", "false");
   }
 
   // Validate duration (positive integer)
   if (!/^\d+$/.test(duration) || duration <= 0) {
-    document.getElementById('duration').setAttribute("aria-invalid", "true");
+    document.getElementById('add_v_duration').setAttribute("aria-invalid", "true");
     return;
   } else {
-    document.getElementById('duration').setAttribute("aria-invalid", "false");
+    document.getElementById('add_v_duration').setAttribute("aria-invalid", "false");
   }
 
 
@@ -59,14 +59,14 @@ vadd_form.addEventListener('submit', (event) => {
     .then(response => response.text())
     .then(data => {
       const messageDiv = document.getElementById('vadd-message');
-      messageDiv.textContent = data.message; // Assuming the API returns a message
+      messageDiv.innerHTML = data; // Assuming the API returns a message
 
       // Handle successful response
-      vadd_form.reset();
+      // vadd_form.reset();
     })
     .catch(error => {
-      const messageDiv = document.getElementById('message');
-      messageDiv.textContent = 'Error adding videofile: ' + error.message;
+      const messageDiv = document.getElementById('vadd-message');
+      messageDiv.innerHTML = 'Error adding videofile: ' + error;
       console.error('Error adding videofile:', error);
     });
 });

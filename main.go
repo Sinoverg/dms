@@ -41,7 +41,7 @@ func HandleTempl(db *database.DBController,r *chi.Mux){
 }
 
 func HandleAPI(db *database.DBController, r *chi.Mux) {
-	r.HandleFunc("/api/delete/{table}",handler.ApiDelete(db))
+	r.HandleFunc("/api/delete/{table}/{id}",handler.ApiDelete(db))
 
 	r.HandleFunc("/api/add/users",handler.ApiAddUser(db))
 	r.HandleFunc("/api/add/videofiles",handler.ApiAddVideofile(db))
@@ -49,8 +49,10 @@ func HandleAPI(db *database.DBController, r *chi.Mux) {
 	r.HandleFunc("/api/add/broadcasts_files",handler.ApiAddBroadcastsFiles(db))
 	r.HandleFunc("/api/add/broadcasts_users",handler.ApiAddBroadcastsUsers(db))
 
-	r.HandleFunc("/api/update/videofiles",handler.ApiUpdateVideofile(db))
-	r.HandleFunc("/api/update/users",handler.ApiUpdateUser(db))
-	r.HandleFunc("/api/update/broadcasts",handler.ApiUpdateBroadcast(db))
+	r.HandleFunc("/api/patch/videofiles/{id}",handler.ApiUpdateVideofile(db))
+	r.HandleFunc("/api/patch/users/{id}",handler.ApiUpdateUser(db))
+	r.HandleFunc("/api/patch/broadcasts/{id}",handler.ApiUpdateBroadcast(db))
+	r.HandleFunc("/api/patch/broadcasts_files/{id}",handler.ApiUpdateBroadcast(db))
+	r.HandleFunc("/api/patch/broadcasts_users/{id}",handler.ApiUpdateBroadcast(db))
 
 } 

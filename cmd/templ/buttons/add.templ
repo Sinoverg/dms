@@ -49,7 +49,12 @@ templ AddBroadcastsUsersDialog() {
 					placeholder="Broadcast id"
 					required
 				/>
-				<input type="number" id="add_bu_user_id" name="userId" placeholder="User id" required/>
+				<input 
+				type="number" 
+				id="add_bu_user_id" 
+				name="userId" 
+				placeholder="User id" 
+				required/>
 				<button type="submit">Add</button>
 			</form>
 			<div id="buadd-message"></div>
@@ -92,6 +97,7 @@ templ AddBroadcastsFilesDialog() {
 				/>
 				<button type="submit">Add</button>
 			</form>
+						<div id="bfadd-message"></div>
 		</article>
 	</dialog>
 	<script src="/static/js/buttons/add/broadcasts_files.js"></script>
@@ -157,8 +163,8 @@ templ AddVideofileDialog() {
 					type="number"
 					id="add_v_size"
 					name="size"
-					min="0.01"
-					placeholder="File size in MB"
+					min="1"
+					placeholder="File size in KB"
 					required
 				/>
 				<small>Enter file size in MB</small>

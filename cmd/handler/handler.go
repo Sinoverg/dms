@@ -12,7 +12,31 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// func GetHandler(db *database.DBController) func(w http.ResponseWriter, r *http.Request) {
+// 	return func(w http.ResponseWriter, r *http.Request) {
+// 		table := r.PathValue("table")
+// 		id := r.PathValue("id")
+// 		switch table {
+// 		case "users":
 
+// 		case "videofiles":
+
+// 		case "broadcasts":
+
+// 		case "broadcasts_files":
+// 			fid := r.URL.Query().Get(fileid);
+
+// 		case "broadcasts_users":
+// 			uid := r.URL.Query().Get(userid);
+// 	}
+// }
+func formatDateString(input, inputFormat, outputFormat string) (string, error) {
+    parsedTime, err := time.Parse(inputFormat, input)
+    if err != nil {
+        return "", err
+    }
+    return parsedTime.Format(outputFormat), nil
+}
 
 func TableHandler(db *database.DBController) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +98,7 @@ func TableHandler(db *database.DBController) func(w http.ResponseWriter, r *http
 		case "broadcasts":
 			broadcasts := make([]models.Broadcast, 0)
 			for rows.Next() {
-				var id, starttime, endtime string 
+				var id, starttime, endtime string
 				err := rows.Scan(&id, &starttime, &endtime)
 				if err != nil {
 					log.Err(err).Msg("Error scanning broadcasts rows")
@@ -82,13 +106,29 @@ func TableHandler(db *database.DBController) func(w http.ResponseWriter, r *http
 					w.Write([]byte("Internal error, try later"))
 					return
 				}
+			
+				// Convert starttime and endtime to the format expected by datetime-local
+				const inputFormat = "2006-01-02T15:04:05Z"
+				const outputFormat = "2006-01-02T15:04"
+				formattedStartTime, err := formatDateString(starttime, inputFormat, outputFormat)
+				if err != nil {
+					log.Err(err).Msg("Error formatting start time")
+					formattedStartTime = "" // Set a default or handle the error gracefully
+				}
+				formattedEndTime, err := formatDateString(endtime, inputFormat, outputFormat)
+				if err != nil {
+					log.Err(err).Msg("Error formatting end time")
+					formattedEndTime = "" // Set a default or handle the error gracefully
+				}
+			
 				broadcast := models.Broadcast{
 					Id:                 id,
-					BroadcastStartTime: starttime,
-					BroadcastEndTime:   endtime,
+					BroadcastStartTime: formattedStartTime,
+					BroadcastEndTime:   formattedEndTime,
 				}
 				broadcasts = append(broadcasts, broadcast)
 			}
+			
 			tables.Broadcast(broadcasts).Render(r.Context(), w)
 			return
 		case "broadcasts_users":
@@ -249,6 +289,7 @@ func ApiAddBroadcastsFiles(db *database.DBController) func(w http.ResponseWriter
 					w.Write([]byte(err.Error()))
 					return
 				}
+				
 				if err := db.AddBroadcastFile(bf.BroadcastId, bf.VideofileId); err != nil {
 					log.Err(err).Msg("Error adding broadcasts_files to database")
 					w.WriteHeader(http.StatusBadRequest)
@@ -261,8 +302,60 @@ func ApiAddBroadcastsFiles(db *database.DBController) func(w http.ResponseWriter
 	}}
 func ApiDelete(db *database.DBController) func(w http.ResponseWriter, r *http.Request){
 	return func(w http.ResponseWriter, r *http.Request){
-		switch r.PathValue("table"){
+				table := r.PathValue("table")
+				id := r.PathValue("id")
+		switch table{
+		case "users":
+			if err := db.DeleteUsers(id); err != nil {
+					log.Err(err).Msg("Error deleting user from database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+			}
+			log.Info().Msg(fmt.Sprintf("User %v was deleted",id))
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("User record was successfully deleted"))
+		case "videofiles":
+			if err := db.DeleteVideofiles(id); err != nil {
+					log.Err(err).Msg("Error deleting videofile from database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+			}
+			log.Info().Msg(fmt.Sprintf("Videofile %v was deleted",id))
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("Videofile record was successfully deleted"))
+		case "broadcasts":
+			if err := db.DeleteBroadcasts(id); err != nil {
+					log.Err(err).Msg("Error deleting broadcast from database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+			}
+			log.Info().Msg(fmt.Sprintf("Broadcast %v was deleted",id))
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("Broadcast record was successfully deleted"))
+		case "broadcasts_files":
+			videofileid := r.URL.Query().Get("videofile_id")
+			if err := db.DeleteBroadcastFile(id,videofileid); err != nil {
+					log.Err(err).Msg("Error deleting broadcasts_files record from database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+			}
 		case "broadcasts_users":
+			userid := r.URL.Query().Get("videofile_id")
+			if err := db.DeleteBroadcastUser(id,userid); err != nil {
+					log.Err(err).Msg("Error deleting broadcasts_users record from database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+			}
+		}
+		}
+	}
+func ApiDeleteBroadcastsUsers(db *database.DBController) func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request){
 				bu := &models.BroadcastUsers{}
 			if err := json.NewDecoder(r.Body).Decode(bu); err != nil {
 					log.Err(err).Msg("Error decoding broadcasts_users from request body")
@@ -279,7 +372,9 @@ func ApiDelete(db *database.DBController) func(w http.ResponseWriter, r *http.Re
 			log.Info().Msg(fmt.Sprintf("Broadcasts_users %v was deleted",bu))
 			w.WriteHeader(http.StatusOK)
 			w.Write([]byte("Broadcasts_users record was successfully deleted"))
-		case "broadcasts_files":
+		}}
+func ApiDeleteBroadcastsFiles(db *database.DBController) func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request){
 				bf := &models.BroadcastFiles{}
 				if err := json.NewDecoder(r.Body).Decode(bf); err != nil{
 					log.Err(err).Msg("Error decoding broadcasts_files from request body")
@@ -296,31 +391,20 @@ func ApiDelete(db *database.DBController) func(w http.ResponseWriter, r *http.Re
 			log.Info().Msg(fmt.Sprintf("Broadcasts_files %v was deleted",bf))
 			w.WriteHeader(http.StatusOK)
 			w.Write([]byte("Broadcasts_files record was successfully deleted"))
-		default:
-			table := r.PathValue("table")
-			id := r.PathValue("id")
-			if err := db.DeleteRecord(table, id); err != nil {
-					log.Err(err).Msg("Error deleting record from database")
-					w.WriteHeader(http.StatusBadRequest)
-					w.Write([]byte(err.Error()))
-					return
-				}
-			log.Info().Msg(fmt.Sprintf("Record with id %d was deleted from %s table",table,id))
-			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(table +" with id "+ id +" was successfully deleted"))
 		}
-}
 }
 func ApiUpdateUser(db *database.DBController) func(w http.ResponseWriter, r *http.Request){
 	return func(w http.ResponseWriter, r *http.Request){
-				u := &models.User{}
-				if err := json.NewDecoder(r.Body).Decode(u); err != nil{
-					log.Err(err).Msg("Error decoding user from request body")
-					w.WriteHeader(http.StatusBadRequest)
-					w.Write([]byte(err.Error()))
-					return
+				u := models.User{
+					Id: r.PathValue("id"),
+					Fname: r.FormValue("first_name"),
+					Sname: r.FormValue("second_name"),
+					Nickname: r.FormValue("nickname"),
+					Login: r.FormValue("login"),
+					Email: r.FormValue("email"),
+					Password: r.FormValue("password"),
 				}
-			if err := db.UpdateUser(u.Id,u.Fname,u.Sname,u.Nickname,u.Login,u.Email,u.Password); err != nil {
+			if err := db.UpdateUser(u); err != nil {
 					log.Err(err).Msg("Error updating user in database")
 					w.WriteHeader(http.StatusBadRequest)
 					w.Write([]byte(err.Error()))
@@ -333,13 +417,13 @@ func ApiUpdateUser(db *database.DBController) func(w http.ResponseWriter, r *htt
 }
 func ApiUpdateVideofile(db *database.DBController) func(w http.ResponseWriter, r *http.Request){
 	return func(w http.ResponseWriter, r *http.Request){
-				v := &models.Videofile{}
-			if err := json.NewDecoder(r.Body).Decode(v); err != nil{
-					log.Err(err).Msg("Error decoding videofile from request body")
-					w.WriteHeader(http.StatusBadRequest)
-					w.Write([]byte(err.Error()))
-					return
-			}
+				v := models.Videofile{
+					Id: r.PathValue("id"),
+					Filename: r.FormValue("filename"),
+					Uploader: r.FormValue("uploader"),
+					Size: r.FormValue("size"),
+					Duration: r.FormValue("duration"),
+				}
 			if err := db.UpdateVideoFile(v.Id,v.Filename,v.Uploader,v.Size,v.Duration); err != nil {
 					log.Err(err).Msg("Error updating videofile in database")
 					w.WriteHeader(http.StatusBadRequest)
@@ -353,14 +437,47 @@ func ApiUpdateVideofile(db *database.DBController) func(w http.ResponseWriter, r
 }
 func ApiUpdateBroadcast(db *database.DBController) func(w http.ResponseWriter, r *http.Request){
 	return func(w http.ResponseWriter, r *http.Request){
-				b := &models.Broadcast{}
-				if err := json.NewDecoder(r.Body).Decode(b); err != nil{
-					log.Err(err).Msg("Error decoding broadcast from request body")
+				b := models.Broadcast{
+					Id: r.PathValue("id"),
+					BroadcastStartTime: r.FormValue("broadcast_start_time"),
+					BroadcastEndTime: r.FormValue("broadcast_end_time"),
+				}
+			if err := db.UpdateBroadcast(b); err != nil {
+					log.Err(err).Msg("Error updating broadcast in database")
 					w.WriteHeader(http.StatusBadRequest)
 					w.Write([]byte(err.Error()))
 					return
+			}
+			log.Info().Msg(fmt.Sprintf("Broadcast record updated to %v",b))
+			w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Broadcast was successfully update"))
+}
+}
+func ApiUpdateBroadcastUsers(database.DBController) func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request){
+				b := models.BroadcastUsers{
+					BroadcastId: r.FormValue("broadcast_id"),
+					UserId: r.FormValue("user_id"),
 				}
-			if err := db.UpdateBroadcast(b.Id,b.BroadcastStartTime,b.BroadcastEndTime); err != nil {
+			if err := db.UpdateBroadcastUsers(b); err != nil {
+					log.Err(err).Msg("Error updating broadcast in database")
+					w.WriteHeader(http.StatusBadRequest)
+					w.Write([]byte(err.Error()))
+					return
+			}
+			log.Info().Msg(fmt.Sprintf("Broadcast record updated to %v",b))
+			w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Broadcast was successfully update"))
+}
+}
+
+}return func(w http.ResponseWriter, r *http.Request){
+				b := models.Broadcast{
+					Id: r.PathValue("id"),
+					BroadcastStartTime: r.FormValue("broadcast_start_time"),
+					BroadcastEndTime: r.FormValue("broadcast_end_time"),
+				}
+			if err := db.UpdateBroadcast(b); err != nil {
 					log.Err(err).Msg("Error updating broadcast in database")
 					w.WriteHeader(http.StatusBadRequest)
 					w.Write([]byte(err.Error()))

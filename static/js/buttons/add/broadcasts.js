@@ -39,12 +39,12 @@ badd_form.addEventListener('submit', (event) => {
     .then(data => {
       // Handle successful response
       const messageDiv = document.getElementById('badd-message');
-      messageDiv.textContent = data.message; // Assuming the API returns a message
+      messageDiv.innerHTML = data; // Assuming the API returns a message
       console.log('Broadcast added successfully:', data);
     })
     .catch(error => {
       const messageDiv = document.getElementById('badd-message');
-      messageDiv.textContent = error.message; // Assuming the API returns a message
+      messageDiv.innerHTML = error; // Assuming the API returns a message
       console.error('Error adding broadcast:', error);
       // Handle errors here (e.g., display an error message)
     });
