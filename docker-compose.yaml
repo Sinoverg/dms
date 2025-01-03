@@ -1,0 +1,24 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_dbms
+    environment:
+      POSTGRES_USER: dbmsuser
+      POSTGRES_PASSWORD: aUSd5TRlsbJR7tA7CRsxK6bhwaax59jpcbNwt2A9nC8ec8o6943EA5h6HiPW8VU8ETV4kmP5dY85oABV8XzUMMSeqrvuHEr9W83mgzT5EiXkYJn2deUNe4fC7poWib6e
+      POSTGRES_DB: dbms
+    ports:
+      - "5432:5432"
+  dbms:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dbms
+    ports:
+      - "1488:1488"
+    depends_on:
+      - postgres
+    environment:
+      - DB_HOST=postgres_dbms
+      - DB_PORT=5432
+      - PORT=1488

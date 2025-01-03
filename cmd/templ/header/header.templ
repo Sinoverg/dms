@@ -3,9 +3,10 @@ package header
 import (
 "github.com/Cirqach/dms/cmd/templ/buttons"
 "github.com/Cirqach/dms/cmd/templ/tables"
+	"github.com/Cirqach/dms/internal/database/models"
 )
 
-templ Header() {
+templ Header(users []models.User, broadcasts []models.Broadcast, videofiles []models.Videofile) {
 
 <script>
 	function ShowDialog(name) {
@@ -23,8 +24,8 @@ templ Header() {
 @buttons.AddUserDialog()
 @buttons.AddVideofileDialog()
 @buttons.AddBroadcastDialog()
-@buttons.AddBroadcastsFilesDialog()
-@buttons.AddBroadcastsUsersDialog()
+@buttons.AddBroadcastsFilesDialog(broadcasts, videofiles)
+@buttons.AddBroadcastsUsersDialog(users,broadcasts)
 @buttons.DeleteBroadcastsFilesDialog()
 @buttons.DeleteBroadcastsUsersDialog()
 @buttons.DeleteDialog()

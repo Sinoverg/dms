@@ -1,4 +1,9 @@
 package buttons
+import(
+	"fmt"
+	"time"
+	"github.com/Cirqach/dms/internal/database/models"
+)
 
 templ AddButton() {
 	<details class="dropdown">
@@ -26,7 +31,7 @@ templ AddButton() {
 	<script src="/static/js/buttons/add/dialogs.js"></script>
 }
 
-templ AddBroadcastsUsersDialog() {
+templ AddBroadcastsUsersDialog(users []models.User, broadcasts []models.Broadcast) {
 	<dialog id="add_broadcasts_users_dialog">
 		<article>
 			<header>
@@ -41,29 +46,37 @@ templ AddBroadcastsUsersDialog() {
 					</strong>
 				</p>
 			</header>
-			<form id="buadd-form">
-				<input
-					type="number"
-					id="add_bu_broadcast_id"
-					name="broadcastId"
-					placeholder="Broadcast id"
-					required
-				/>
-				<input 
-				type="number" 
-				id="add_bu_user_id" 
-				name="userId" 
-				placeholder="User id" 
-				required/>
-				<button type="submit">Add</button>
-			</form>
+			<form 
+					hx-post="/api/add/broadcasts-users"
+					hx-confirm="Are you sure you wish to add this record?"
+					hx-target="#buadd-message"
+					>
+						<!-- Select Broadcast -->
+						<label for="broadcast-select">Select Broadcast:</label>
+						<select id="broadcast-select" name="broadcastId" >
+							for _,broadcast := range broadcasts{
+						<option value={fmt.Sprintf("%d", broadcast.Id) }>{ broadcast.StartTime.Format(time.DateTime) } - { broadcast.EndTime.Format(time.DateTime) }</option>
+							}
+						</select>
+					
+						<!-- Select User -->
+						<label for="user-select">Select User:</label>
+						<select id="user-select" name="userId" >
+
+	for _,user := range users{
+    <option value={ fmt.Sprintf("%d", user.Id) }>{ user.Nickname } ({ user.Email })</option>
+	}
+
+						</select>
+					
+						<button type="submit">Link</button>
+					</form>
 			<div id="buadd-message"></div>
 		</article>
 	</dialog>
-	<script src="/static/js/buttons/add/broadcasts_users.js"></script>
 }
 
-templ AddBroadcastsFilesDialog() {
+templ AddBroadcastsFilesDialog(broadcasts []models.Broadcast, videofiles []models.Videofile) {
 	<dialog id="add_broadcasts_files_dialog">
 		<article>
 			<header>
@@ -78,29 +91,30 @@ templ AddBroadcastsFilesDialog() {
 					</strong>
 				</p>
 			</header>
-			<form id="bfadd-form">
-				<input
-					min="0"
-					type="number"
-					id="add_bf_broadcast_id"
-					name="broadcast_id"
-					placeholder="Broadcast id"
-					required
-				/>
-				<input
-					min="0"
-					type="number"
-					id="add_bf_videofile_id"
-					name="videofile_id"
-					placeholder="Videofile id"
-					required
-				/>
+			<form 
+					hx-post="/api/add/broadcasts-files"
+					hx-confirm="Are you sure you wish to add this record?"
+					hx-target="#bfadd-message"
+					>
+				<label for="broadcast-select">Select Broadcast:</label>
+				<select id="broadcast-select" name="broadcastId">
+	for _,broadcast := range broadcasts{
+		<option value={fmt.Sprintf("%d", broadcast.Id) }>{ broadcast.StartTime.Format(time.DateTime) } - { broadcast.EndTime.Format(time.DateTime) }</option>
+
+	}
+				</select>
+				<label for="file-select">Select File:</label>
+				<select id="file-select" name="fileId">
+	for _,videofile := range videofiles{
+    <option value={ fmt.Sprintf("%d", videofile.Id) }>{ videofile.Filename } ({ videofile.Duration }, {videofile.Size} KB)</option>
+	}
+				</select>
+
 				<button type="submit">Add</button>
 			</form>
 						<div id="bfadd-message"></div>
 		</article>
 	</dialog>
-	<script src="/static/js/buttons/add/broadcasts_files.js"></script>
 }
 
 templ AddBroadcastDialog() {
@@ -276,4 +290,21 @@ templ AddUserDialog() {
 		</article>
 	</dialog>
 	<script src="/static/js/buttons/add/users.js"></script>
+}
+
+templ SearchUsers(users []models.User){
+<select id="user-select" name="userID">
+	for _,user := range users{
+    <option value={ fmt.Sprintf("%d", user.Id) }>{ user.Nickname } ({ user.Email })</option>
+	}
+</select>
+
+}
+templ SearchBroadcasts(broadcasts []models.Broadcast){
+<select id="broadcast-select" name="broadcastID">
+	for _,broadcast := range broadcasts{
+    <option value={ fmt.Sprintf("%d", broadcast.Id) }>{ broadcast.StartTime.Format(time.DateTime) } ({ broadcast.EndTime.Format(time.DateTime) })</option>
+	}
+</select>
+
 }

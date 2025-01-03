@@ -1,20 +1,23 @@
 package body
 
-import "github.com/Cirqach/dms/cmd/templ/header"
+import (
+	"github.com/Cirqach/dms/cmd/templ/header"
+	"github.com/Cirqach/dms/internal/database/models"
+)
 
-templ Body() {
+templ Body(users []models.User, broadcasts []models.Broadcast, videofiles []models.Videofile) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>Document</title>
-			<link rel="stylesheet" href="http://localhost:1337/static/css/pico.min.css"/>
+			<link rel="stylesheet" href="http://localhost:1488/static/css/pico.min.css"/>
 			<script src="https://unpkg.com/htmx.org@1.9.5" integrity="sha384-xcuj3WpfgjlKF+FXhSQFQ0ZNr39ln+hwjN3npfM9VBnUskLolQAcN80McRIVOPuO" crossorigin="anonymous"></script>
 		</head>
 		<body>
 			<header class="container-fluid">
-				@header.Header()
+				@header.Header(users,broadcasts, videofiles)
 			</header>
 			<main id="main" class="container-fluid">
 				<h1 style="text-align: center;">Select table</h1>
@@ -35,9 +38,17 @@ templ Body() {
 							<td><button onClick="ChangeTableName('Broadcasts_users')" hx-get="/templ/tables/broadcasts_users" hx-target="main">Change</button></td>
 						</tr>
 					</table>
+					
+					
+					<!-- Containers for dynamic options -->
+					<div id="broadcast-options"></div>
+					<div id="user-options"></div>
+					
+
 				</div>
 			</main>
 			<footer></footer>
 		</body>
 	</html>
 }
+

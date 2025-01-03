@@ -1,2 +1,2 @@
-templ generate
-go run .
+~/go/bin/templ generate
+sudo docker compose up --build

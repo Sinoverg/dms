@@ -1,31 +1,107 @@
 package tables
 import (
+	"time"
 "fmt"
  "github.com/Cirqach/dms/internal/database/models"
 )
 
-templ Files(videofiles []models.Videofile) {
-	<section>
+templ Files(videofiles []models.Videofile, users []models.User) {
 				<div class="search-field">
-<form action="/search/videofiles" method="POST">
+<form >
     <input class="form-control" type="search"
         name="search" placeholder="Begin typing to search video files..."
         hx-post="/search/videofiles"
         hx-trigger="keyup changed delay:500ms, search"
-        hx-target="#search-results"
+        hx-target="#table"
         hx-indicator=".htmx-indicator">
 </form>
 				</div>
+				<details>
+					<summary>Filter</summary>
+				<div id="filter">
+<form hx-post="/filter/videofiles" hx-target="#table">
+	<select name="uploader">
+		<option value="">User</option>
+		for _,user := range users{
+<option value={fmt.Sprintf("%d", user.Id)}>{user.Fname + " " + user.Sname + " (" + user.Nickname + ")"}</option>
+		}
+	</select>
+	<label>
+		Size
+		<fieldset role="group">
+		<input name="size_bottom" placeholder="Bottom limit of size"><input name="size_top" placeholder="Top limit of size">
+		</fieldset>
+	</label>
+	<label>
+		Duration
+		<fieldset role="group">
+		<input name="duration_bottom" placeholder="Bottom limit of duration"><input name="duration_top" placeholder="Top limit of duration">
+		</fieldset>
+	</label>
+	<input type="submit" value="Filter">
+</form>
+				</div>
+				</details>
+				<div id="sort">
+					<nav>
+
+					<li><details class="dropdown">
+						<summary>Size</summary>
+						<ul>
+							<li
+						hx-get="/sort/videofiles/size/asc"
+						hx-target="#table"
+							>Ascending</li>
+							<li
+						hx-get="/sort/videofiles/size/desc"
+						hx-target="#table"
+							>Descending</li>
+						</ul>
+					</details></li>
+					<li><details class="dropdown">
+						<summary>Duration</summary>
+						<ul>
+							<li
+						hx-get="/sort/videofiles/duration/asc"
+						hx-target="#table"
+							>Ascending</li>
+							<li
+						hx-get="/sort/videofiles/duration/desc"
+						hx-target="#table"
+							>Descending</li>
+						</ul>
+					</details></li>
+					<li><details class="dropdown">
+						<summary>Uploader</summary>
+						<ul>
+							<li
+						hx-get="/sort/videofiles/uploader/asc"
+						hx-target="#table"
+							>Ascending</li>
+							<li
+						hx-get="/sort/videofiles/uploader/desc"
+						hx-target="#table"
+							>Descending</li>
+						</ul>
+					</details></li>
+
+					</nav>
+				</div>
+				@VideofilesTable(videofiles,users)
+			}
+			templ VideofilesTable(videofiles []models.Videofile,users []models.User) {
+				<div id="table">
+
 		for _, videofile := range videofiles {
 			<article style="border-style:groove; margin: 5px;">
 				<header>
-					<h4 style="text-align: center;">{ videofile.Id }</h4>
+					<h4 style="text-align: center;">{ fmt.Sprintf("%d",videofile.Id) }</h4>
 				</header>
 					<form 
 					hx-confirm="Are you sure you wish to update this record?"
-					hx-patch={ fmt.Sprintf("/api/patch/videofiles/%s", videofile.Id) }
-					hx-target={ fmt.Sprintf("#videofile%s",videofile.Id) }
-				>
+					hx-patch={ fmt.Sprintf("/api/patch/videofiles/%d", videofile.Id) }
+					hx-target={ fmt.Sprintf("#videofile%d",videofile.Id) }
+					>
 						<input
 							type="text"
 							name="filename"
@@ -34,15 +110,15 @@ templ Files(videofiles []models.Videofile) {
 							value={ videofile.Filename }
 							pattern="^[A-Za-z0-9]+.[A-Za-z0-9]+$"
 						/>
-						<input
-							type="number"
-							min="0"
-							name="uploader"
-							placeholder="Uploader id"
-							required
-							value={ videofile.Uploader }
-							pattern="^[0-9]+$"
-						/>
+						<select name="uploaderId">
+							for _, user := range users {
+								if user.Id == videofile.Uploader {
+									<option value={fmt.Sprintf("%d", user.Id)} selected>{user.Fname + " " + user.Sname + " (" + user.Nickname + ")"}</option>
+								} else {
+									<option value={fmt.Sprintf("%d", user.Id)}>{user.Fname + " " + user.Sname + " (" + user.Nickname + ")"}</option>
+								}
+							}
+						</select>
 						<input
 							type="number"
 							name="size"
@@ -64,42 +140,148 @@ templ Files(videofiles []models.Videofile) {
 						/>
 						<button
 							type="button"
-							hx-delete={ fmt.Sprintf("/api/delete/videofiles/%s", videofile.Id) }
+							hx-delete={ fmt.Sprintf("/api/delete/videofiles/%d", videofile.Id) }
 							hx-confirm="Are you sure you wish to delete this record? IT CAN'T BE UNDONE!"
-						hx-target={ fmt.Sprintf("#videofile%s",videofile.Id) }
+						hx-target={ fmt.Sprintf("#videofile%d",videofile.Id) }
 						>Delete</button>
 						<button
 							type="submit"
 						>Update</button>
 					</form>
-				<div id={ fmt.Sprintf("videofile%s",videofile.Id) }>
+				<div id={ fmt.Sprintf("videofile%d",videofile.Id) }>
 					
 				</div>
 			</article>
 		}
-	</section>
+				</div>
 }
 
 templ Users(users []models.User) {
 				<div class="search-field">
-<form action="/search/users" method="POST">
+<form >
     <input class="form-control" type="search"
         name="search" placeholder="Begin typing to search users..."
         hx-post="/search/users"
         hx-trigger="keyup changed delay:500ms, search"
+		hx-target="#table"
 		>
 </form>
 				</div>
-	<section>
+<details>
+					<summary>Filter</summary>
+				<div id="filter">
+<form hx-post="/filter/users" hx-target="#table">
+	<label>
+		First Name
+		<input name="fname" placeholder="First Name">
+	</label>
+	<label>
+		Second Name
+		<input name="sname" placeholder="Second Name">
+	</label>
+	<label>
+		Nickname
+		<input name="nickname" placeholder="Nickname">
+	</label>
+	<label>
+		Login
+		<input name="login" placeholder="Login">
+	</label>
+	<label>
+		Email
+		<input name="email" type="email" placeholder="Email">
+	</label>
+	<input type="submit" value="Filter">
+
+</form>
+				</div>
+				</details>
+				<div id="sort">
+					<nav>
+					<li><details class="dropdown">
+						<summary>First name</summary>
+						<ul>
+							<li
+						hx-get="/sort/users/firstname/asc"
+						hx-target="#table"
+							>Ascending</li>
+							<li
+						hx-get="/sort/users/firstname/desc"
+						hx-target="#table"
+							>Descending</li>
+						</ul>
+					</details>	
+</li>
+
+					<li><details class="dropdown">
+						<summary>Second name</summary>
+						<ul>
+							<li
+						hx-get="/sort/users/secondaryname/asc"
+						hx-target="#table"
+							>Ascending</li>
+							<li
+						hx-get="/sort/users/secondaryname/desc"
+						hx-target="#table"
+							>Descending</li>
+						</ul>
+					</details></li>
+					<li><details class="dropdown">
+						<summary>Nickname</summary>
+						<ul>
+							<li
+						hx-get="/sort/users/nickname/asc"
+						hx-target="#table"
+							>Ascending</li>
+							<li
+						hx-get="/sort/users/nickname/desc"
+						hx-target="#table"
+							>Descending</li>
+						</ul>
+					</details></li>
+					<li><details class="dropdown">
+						<summary>Login</summary>
+						<ul>
+							<li
+						hx-get="/sort/users/login/asc"
+						hx-target="#table"
+							>Ascending</li>
+							<li
+						hx-get="/sort/users/login/desc"
+						hx-target="#table"
+							>Descending</li>
+						</ul>
+					</details></li>
+					<li><details class="dropdown">
+						<summary>Email</summary>
+						<ul>
+							<li
+						hx-get="/sort/users/email/asc"
+						hx-target="#table"
+							>Ascending</li>
+							<li
+						hx-get="/sort/users/email/desc"
+						hx-target="#table"
+							>Descending</li>
+						</ul>
+					</details></li>
+				
+					</nav>
+				</div>
+@UsersTable(users)
+			}
+templ UsersTable(users []models.User) {
+
+				<div id="table">
 		for _, user := range users {
 			<article id="element" style="border-style:groove; margin: 5px;">
 				<header>
-					<h4 style="text-align: center;">{ user.Id }</h4>
+					<h4 style="text-align: center;">{ fmt.Sprintf("%d",user.Id) }</h4>
 				</header>
 			<form style="margin-left: 5px;"
-			hx-patch={ fmt.Sprintf("/api/patch/users/%s", user.Id)} 
+			hx-patch={ fmt.Sprintf("/api/patch/users/%d", user.Id)} 
 			hx-confirm="Are you sure you wish to update this record?"
-			hx-target={ fmt.Sprintf("#user%s",user.Id) }>
+			hx-target={ fmt.Sprintf("#user%d",user.Id) }>
 				<input
 					required
 					type="text"
@@ -150,9 +332,9 @@ templ Users(users []models.User) {
 				/>
 
 		<button type="button" 
-			hx-delete={ fmt.Sprintf("/api/delete/users/%s", user.Id)} 
+			hx-delete={ fmt.Sprintf("/api/delete/users/%d", user.Id)} 
 			hx-confirm="Are you sure you wish to this record? IT CAN'T BE UNDONE!"
-			hx-target={ fmt.Sprintf("#user%s",user.Id) }
+			hx-target={ fmt.Sprintf("#user%d",user.Id) }
 			>
 		Delete</button> 
 
@@ -160,162 +342,358 @@ templ Users(users []models.User) {
 		>Update</button> 
 
 				</form>
-		<div id={ fmt.Sprintf("user%s",user.Id) }>
+		<div id={ fmt.Sprintf("user%d",user.Id) }>
 			
 		</div>
 			</article>
 		}
-	</section>
+	</div>
 }
 
 templ Broadcast(broadcast []models.Broadcast) {
 				<div class="search-field">
-<form action="/search/broadcasts" method="POST">
+<form>
     <input class="form-control" type="search"
         name="search" placeholder="Begin typing to search broadcasts..."
         hx-post="/search/broadcasts"
         hx-trigger="keyup changed delay:500ms, search"
-        hx-target="#search-results"
+        hx-target="#table"
         hx-indicator=".htmx-indicator">
 </form>
 				</div>
+<details>
+					<summary>Filter</summary>
+				<div id="filter">
+<form hx-post="/filter/broadcasts" hx-target="#table">
+	<label>
+		Start Time
+		<input type="datetime-local" name="start_time">
+	</label>
+	<label>
+		End Time
+		<input type="datetime-local" name="end_time">
+	</label>
+	<input type="submit" value="Filter">
+</form>
+				</div>
+				</details>
+				<div id="sort">
+					<nav>
+					<li>
+						<details class="dropdown">
+						<summary>Start time</summary>
+						<ul>
+							<li
+						hx-get="/sort/broadcasts/broadcaststarttime/asc"
+						hx-target="#table"
+							>Ascending</li>
+							<li
+						hx-get="/sort/broadcasts/broadcaststarttime/desc"
+
+						hx-target="#table"
+							>Descending</li>
+						</ul>
+					</details>
+				</li>
+					<li>
+						<details class="dropdown">
+						<summary>End time</summary>
+						<ul>
+							<li
+						hx-get="/sort/broadcasts/broadcastendtime/asc"
+						hx-target="#table"
+							>Ascending</li>
+							<li
+						hx-get="/sort/broadcasts/broadcastendtime/desc"
+						hx-target="#table"
+							>Descending</li>
+						</ul>
+					</details>
+				</li>
+
+						
+					</nav>
+				</div>
+
+@BroadcastsTable(broadcast)
+}
+templ BroadcastsTable(broadcast []models.Broadcast) {
+
+				<div id="table">
 	<section>
 		for _, b := range broadcast {
 			<article id="element" style="border-style:groove; margin: 5px;">
 				<header>
-					<h4 style="text-align: center;">{ b.Id }</h4>
+					<h4 style="text-align: center;">{ fmt.Sprintf("%d",b.Id) }</h4>
 				</header>
 				<form 
-			hx-patch={ fmt.Sprintf("/api/patch/broadcasts/%s", b.Id)} 
+			hx-patch={ fmt.Sprintf("/api/patch/broadcasts/%d", b.Id)} 
 			hx-confirm="Are you sure you wish to update this record?"
-			hx-target={ fmt.Sprintf("#broadcast%s",b.Id) }
+			hx-target={ fmt.Sprintf("#broadcast%d",b.Id) }
 			>
 				<input
 					type="datetime-local"
 					name="broadcast_start_time"
 					placeholder="Broadcast start time"
-					value={ b.BroadcastStartTime }
+					value={b.StartTime.Format(time.DateTime)}
+
 					required
 				/>
 				<input
 					type="datetime-local"
 					name="broadcast_end_time"
 					placeholder="Broadcast end time"
-					value={ b.BroadcastEndTime }
+					value={ b.EndTime.Format(time.DateTime) }
 					required
 				/>
 		<button type="button" 
-		hx-delete={ fmt.Sprintf("/api/delete/broadcasts/%s", b.Id)} 
+		hx-delete={ fmt.Sprintf("/api/delete/broadcasts/%d", b.Id)} 
 		hx-confirm="Are you sure you wish to this record? IT CAN'T BE UNDONE!"
-			hx-target={ fmt.Sprintf("#broadcast%s",b.Id) }
+			hx-target={ fmt.Sprintf("#broadcast%d",b.Id) }
 		>Delete</button> 
 		<button type="submit" 
 		>Update</button> 
-				<div id={ fmt.Sprintf("broadcast%s",b.Id) }>
+				<div id={ fmt.Sprintf("broadcast%d",b.Id) }>
 					
 				</div>
 		</form>
 			</article>
 		}
-	</section>
+	</section></div>
 }
 
-templ Broadcasts_files(broadcast_files []models.BroadcastFiles) {
-				<div class="search-field">
-<form action="/search/broadcasts_files" method="POST">
-    <input class="form-control" type="search"
-        name="search" placeholder="Begin typing to search users..."
-        hx-post="/search/broadcasts_files"
-        hx-trigger="keyup changed delay:500ms, search"
-        hx-target="#search-results"
-        hx-indicator=".htmx-indicator">
+templ Broadcasts_files(broadcast_files []models.BroadcastFiles, broadcasts []models.Broadcast, videofiles []models.Videofile) {
+				<details>
+					<summary>Filter</summary>
+				<div id="filter">
+<form hx-post="/filter/broadcasts_files" hx-target="#table">
+	<select name="broadcastId">
+		<option value="">Broadcast</option>
+		for _,broadcast := range broadcasts{
+<option value={fmt.Sprintf("%d", broadcast.Id)}>{broadcast.StartTime.Format(time.DateTime) } - { broadcast.EndTime.Format(time.DateTime) }</option>
+		}
+	</select>
+	<select name="videofileId">
+		<option value="">Videofile</option>
+		for _,videofile := range videofiles{
+<option value={fmt.Sprintf("%d", videofile.Id)}>{videofile.Filename}</option>
+		}
+	</select>
+	<input type="submit" value="Filter">
 </form>
 				</div>
-	<section>
-		for _, bf := range broadcast_files {
-			<article id="element" style="border-style:groove; margin: 5px;">
-			<form 
-		hx-confirm="Are you sure you wish to update this record?"
-			hx-patch={ fmt.Sprintf("/api/patch/broadcasts_files/%s?VideofileId=%s", bf.BroadcastId,bf.VideofileId)} 
-			hx-target={ fmt.Sprintf("#broadcast%s_file%s",bf.BroadcastId,bf.VideofileId) }
-			>
-				<input
-					type="number"
-					id="add_bu_broadcast_id"
-					name="broadcastId"
-					placeholder="Broadcast id"
-					value={bf.BroadcastId}
-					min="0"
-					required
-				/>
-				<input 
-				type="number" 
-				id="add_bu_user_id" 
-				name="userId" 
-				placeholder="User id" 
-				required
-					value={bf.VideofileId}
-					min="0"
-					/>
-		<button type="button" 
-		hx-delete={ fmt.Sprintf("/api/delete/broadcasts_files/%s?VideofileId=%s", bf.BroadcastId,bf.VideofileId)} 
-		hx-confirm="Are you sure you wish to this record? IT CAN'T BE UNDONE!"
-			hx-target={ fmt.Sprintf("#broadcast%s_file%s",bf.BroadcastId,bf.VideofileId) }
-		>Delete</button> 
-		<button type="submit" 
-		>Update</button> 
-		</form>
-		<div id={ fmt.Sprintf("broadcast%s_file%s",bf.BroadcastId,bf.VideofileId) }>
-		</div>
-			</article>
-		}
-	</section>
+				</details>
+				<div id="sort">
+					<nav>
+					<li>
+						<details class="dropdown">
+						<summary>Broadcast</summary>
+						<ul>
+							<li
+						hx-get="/sort/broadcasts_files/broadcastid/asc"
+
+						hx-target="#table"
+							>Ascending</li>
+							<li
+						hx-get="/sort/broadcasts_files/broadcastid/desc"
+						hx-target="#table"
+							>Descending</li>
+						</ul>
+					</details>
+					</li>
+					<li><details class="dropdown">
+						<summary>Videofile</summary>
+						<ul>
+							<li
+						hx-get="/sort/broadcasts_files/fileid/asc"
+						hx-target="#table"
+							>Ascending</li>
+							<li
+						hx-get="/sort/broadcasts_files/fileid/desc"
+						hx-target="#table"
+							>Descending</li>
+						</ul></details>
+					</li>	
+					</nav>
+				</div>
+
+    @BroadcastsFilesTable(broadcast_files, broadcasts, videofiles)
 }
 
-templ Broadcasts_users(broadcast_users []models.BroadcastUsers) {
-				<div class="search-field">
-<form action="/search/broadcasts_users" method="POST">
-    <input class="form-control" type="search"
-        name="search" placeholder="Begin typing to search users..."
-        hx-post="/search/broadcasts_users"
-        hx-trigger="keyup changed delay:500ms, search"
-        hx-target="#search-results"
-        hx-indicator=".htmx-indicator">
+templ BroadcastsFilesTable(broadcast_files []models.BroadcastFiles, broadcasts []models.Broadcast, videofiles []models.Videofile) {
+    <div id="table">
+        for _, bf := range broadcast_files {
+            <article>
+                <form
+                    hx-post={ fmt.Sprintf("/api/patch/broadcasts-files/%d?videofile_id=%d", bf.BroadcastId, bf.VideofileId) }
+                    hx-confirm="Are you sure you wish to update this record?"
+                    hx-target={ fmt.Sprintf("#broadcast%d_files%d", bf.BroadcastId, bf.VideofileId) }
+                >
+                    <label>Broadcast</label>
+                    <select name="broadcastId">
+                        for _, broadcast := range broadcasts {
+                            if broadcast.Id == bf.BroadcastId {
+                                <option value={fmt.Sprintf("%d", broadcast.Id)} selected>
+                                    {broadcast.StartTime.Format(time.DateTime)} - {broadcast.EndTime.Format(time.DateTime)}
+                                </option>
+                            } else {
+                                <option value={fmt.Sprintf("%d", broadcast.Id)}>
+                                    {broadcast.StartTime.Format(time.DateTime)} - {broadcast.EndTime.Format(time.DateTime)}
+                                </option>
+                            }
+                        }
+                    </select>
+                    
+                    <label>Videofile</label>
+                    <select name="videofileId">
+                        for _, videofile := range videofiles {
+                            if videofile.Id == bf.VideofileId {
+                                <option value={fmt.Sprintf("%d", videofile.Id)} selected>
+                                    {videofile.Filename} ({videofile.Duration}, {videofile.Size} KB)
+                                </option>
+                            } else {
+                                <option value={fmt.Sprintf("%d", videofile.Id)}>
+                                    {videofile.Filename} ({videofile.Duration}, {videofile.Size} KB)
+                                </option>
+                            }
+                        }
+                    </select>
+                    
+                    <button type="submit">Update</button>
+                </form>
+                
+                <button
+                    type="button"
+                    hx-delete={ fmt.Sprintf("/api/delete/broadcasts_files/%d?videofile_id=%d", bf.BroadcastId, bf.VideofileId) }
+                    hx-confirm="Are you sure you wish to delete this record? IT CAN'T BE UNDONE!"
+                    hx-target={ fmt.Sprintf("#broadcast%d_files%d", bf.BroadcastId, bf.VideofileId) }
+                >
+                    Delete
+                </button>
+                
+                <div id={ fmt.Sprintf("broadcast%d_files%d", bf.BroadcastId, bf.VideofileId) }>
+                </div>
+            </article>
+        }
+    </div>
+}
+
+templ Broadcasts_users(broadcast_users []models.BroadcastUsers, users []models.User, broadcasts []models.Broadcast) {
+			
+<details>
+					<summary>Filter</summary>
+				<div id="filter">
+<form hx-post="/filter/broadcasts_users" hx-target="#table">
+	<select name="broadcastId">
+		<option value="">Broadcast</option>
+		for _,broadcast := range broadcasts{
+<option value={fmt.Sprintf("%d", broadcast.Id)}>{broadcast.StartTime.Format(time.DateTime) } - { broadcast.EndTime.Format(time.DateTime) }</option>
+		}
+	</select>
+	<select name="userId">
+		<option value="">User</option>
+		for _,user := range users{
+<option value={fmt.Sprintf("%d", user.Id)}>{user.Nickname} ({user.Email})</option>
+		}
+	</select>
+	<input type="submit" value="Filter">
 </form>
 				</div>
-	<section>
-		for _, bu := range broadcast_users {
-			<article id="element" style="border-style:groove; margin: 5px;">
-			<form 
-		hx-confirm="Are you sure you wish to update this record?"
-			hx-patch={ fmt.Sprintf("/api/patch/broadcasts_users/%s?UserId=%s", bu.BroadcastId,bu.UserId)} 
-			hx-target={ fmt.Sprintf("#broadcast%s_users%s",bu.BroadcastId,bu.UserId) }
->
-				<input
-					type="number"
-					name="broadcastId"
-					placeholder="Broadcast id"
-					required
-					value={bu.BroadcastId}
-				/>
-				<input 
-				type="number" 
-				name="userId" 
-				placeholder="User id" 
-				required
-				value={bu.UserId}
-				/>
-		<button type="button" 
-		hx-delete={ fmt.Sprintf("/api/delete/broadcasts_users/%s?UserId=%s", bu.BroadcastId,bu.UserId)} 
-		hx-confirm="Are you sure you wish to this record? IT CAN'T BE UNDONE!"
-			hx-target={ fmt.Sprintf("#broadcast%s_users%s",bu.BroadcastId,bu.UserId) }
-		>Delete</button> 
-		<button type="submit" 
-		>Update</button> 
-			</form>
-		<div id={ fmt.Sprintf("broadcast%s_users%s",bu.BroadcastId,bu.UserId) }>
-		</div>
-			</article>
-		}
-	</section>
-}
+				</details>
+				<div id="sort">
+					<nav>
+					<li>
+						<details class="dropdown">
+						<summary>Broadcast</summary>
+						<ul>
+							<li
+						hx-get="/sort/broadcasts_users/broadcastid/asc"
+						hx-target="#table"
+							>Ascending</li>
+							<li
+						hx-get="/sort/broadcasts_users/broadcastid/desc"
+						hx-target="#table"
+							>Descending</li>
+						</ul>
+					</details>
+					</li>
+					<li><details class="dropdown">
+						<summary>User</summary>
+						<ul>
+							<li
+						hx-get="/sort/broadcasts_users/userid/asc"
+						hx-target="#table"
+							>Ascending</li>
+							<li
+						hx-get="/sort/broadcasts_users/userid/desc"
+						hx-target="#table"
+							>Descending</li>
+						</ul>
+					</details>
+					</li>
+					</nav>
+				</div>
+
+				@BroadcastsUsersTable(broadcast_users, users, broadcasts)
+			}
+			
+			templ BroadcastsUsersTable(broadcast_users []models.BroadcastUsers, users []models.User, broadcasts []models.Broadcast) {
+				<div id="table">
+					for _, bu := range broadcast_users {
+						<article>
+							<form 
+								hx-post={ fmt.Sprintf("/api/patch/broadcasts-users/%d?user_id=%d", bu.BroadcastId, bu.UserId) }
+								hx-confirm="Are you sure you wish to update this record?"
+								hx-target={ fmt.Sprintf("#broadcast%d_users%d", bu.BroadcastId, bu.UserId) }
+							>
+								<label>Broadcast</label>
+								<select name="broadcastId">
+									for _, broadcast := range broadcasts {
+										if broadcast.Id == bu.BroadcastId {
+											<option value={fmt.Sprintf("%d", broadcast.Id)} selected>
+												{broadcast.StartTime.Format(time.DateTime)} - {broadcast.EndTime.Format(time.DateTime)}
+
+											</option>
+										} else {
+											<option value={fmt.Sprintf("%d", broadcast.Id)}>
+												{broadcast.StartTime.Format(time.DateTime)} - {broadcast.EndTime.Format(time.DateTime)}
+
+											</option>
+										}
+									}
+								</select>
+			
+								<label>User</label>
+								<select name="userId">
+									for _, user := range users {
+										if user.Id == bu.UserId {
+											<option value={fmt.Sprintf("%d", user.Id)} selected>
+												{user.Nickname} ({user.Email})
+											</option>
+										} else {
+											<option value={fmt.Sprintf("%d", user.Id)}>
+												{user.Nickname} ({user.Email})
+											</option>
+										}
+									}
+								</select>
+			
+								<button type="submit">Update</button>
+							</form>
+			
+							<button
+								type="button"
+								hx-delete={ fmt.Sprintf("/api/delete/broadcasts_users/%d?user_id=%d", bu.BroadcastId, bu.UserId) }
+								hx-confirm="Are you sure you wish to delete this record? IT CAN'T BE UNDONE!"
+								hx-target={ fmt.Sprintf("#broadcast%d_users%d", bu.BroadcastId, bu.UserId) }
+							>
+								Delete
+							</button>
+			
+							<div id={ fmt.Sprintf("broadcast%d_users%d", bu.BroadcastId, bu.UserId) }></div>
+						</article>
+					}
+				</div>
+			}
+			
+

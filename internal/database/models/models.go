@@ -1,15 +1,17 @@
 package models
 
+import "time"
+
 type Record interface {
 }
 
-type Delete struct{
-	Id string `json:"id"`
+type Delete struct {
+	Id    string `json:"id"`
 	Table string `json:"table"`
 }
 
 type User struct {
-	Id       string `json:"id"`
+	Id       int    `json:"id"`
 	Fname    string `json:"first_name"`
 	Sname    string `json:"second_name"`
 	Nickname string `json:"nickname"`
@@ -19,25 +21,25 @@ type User struct {
 }
 
 type Broadcast struct {
-	Id                 string    `json:"id"`
-		BroadcastStartTime string `json:"b_start_time"`
-		BroadcastEndTime   string `json:"b_end_time"`
+	Id        int    `json:"id"`
+	StartTime time.Time `json:"b_start_time"`
+	EndTime   time.Time `json:"b_end_time"`
 }
 
 type Videofile struct {
-	Id       string `json:"id"`
+	Id       int    `json:"id"`
 	Filename string `json:"filename"`
-	Uploader string `json:"uploader"`
+	Uploader int `json:"uploader"`
 	Size     string `json:"size"`
 	Duration string `json:"duration"`
 }
 
 type BroadcastFiles struct {
-	BroadcastId string `json:"broadcast_id"`
-	VideofileId string `json:"videofile_id"`
+	BroadcastId int `json:"broadcast_id"`
+	VideofileId int `json:"videofile_id"`
 }
 
 type BroadcastUsers struct {
-	BroadcastId string `json:"broadcast_id"`
-	UserId      string `json:"user_id"`
+	BroadcastId int `json:"broadcast_id"`
+	UserId      int `json:"user_id"`
 }
